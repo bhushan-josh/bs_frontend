@@ -4,7 +4,7 @@ import { User } from "./Type";
 import UserDisplay from "./component";
 
 
-const UserData: React.FC = () => {
+const Friends: React.FC = () => {
   const [user, setUser] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,4 +23,4 @@ const UserData: React.FC = () => {
   )
 };
 
-export default UserData;
+export default Friends;

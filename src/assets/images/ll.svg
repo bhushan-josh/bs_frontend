@@ -1,0 +1,15 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 174 35" width="174" height="35">
+	<title>logo</title>
+	<defs>
+		<image  width="8" height="14" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAOCAMAAAAliK2kAAAAAXNSR0IB2cksfwAAAHVQTFRFAAAA9UFf9EBe9UBe/wAA9D9e9D9e8z9e9EBe9D9e8Dxa9T9e9D9f9EBg9D9e9kBg9T9e9D9e/wCA9D9e8z9e9T9e9D9e70Bg8z5e9EBf9T1c9T9g9T5e9D9e/1VV9D9e9T5e9T9d9T9e7Tdb80Be9T9f9D9fvtql6QAAACd0Uk5TAEuIZAHZ/21E9hGrnxj6OHrRAt5qSfUQsJwZNX/QA+BnTfMObKpx7wA7oAAAAGBJREFUeJw1zNEGgEAARNEdJSUlJWWtiP7/gyIia5WUlESkHWle5jxdCA52fPeH/zgfwts7iAhXsBHJGa7CIsUez0S+JRiJcsmMTQl5XLkm1FQMjFcwsidqrdARDdCy/gLM0RcjSKqzOwAAAABJRU5ErkJggg=="/>
+	</defs>
+	<style>
+		tspan { white-space:pre } 
+		.t0 { font-size: 16px;fill: #000000;font-weight: 700;font-family: "UnBPro-Bold", "UnB Pro" } 
+	</style>
+	<use id="Background" href="#img1" x="0" y="13"/>
+	<text id="B I L L S P L I T T E R" style="transform: matrix(1,0,0,1,11.75,25.75)" >
+		<tspan x="0" y="0" class="t0">B</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">I</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">L</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">L</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">S</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">P</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">L</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">I</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">T</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">T</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">E</tspan><tspan  y="0" class="t0"> </tspan><tspan  y="0" class="t0">R</tspan><tspan  y="0" class="t0">
+</tspan>
+	</text>
+</svg>

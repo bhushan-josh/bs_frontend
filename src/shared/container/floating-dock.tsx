@@ -8,7 +8,7 @@ import {
 } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
-import { cn } from "../../../utils/cn";
+import { cn } from "../../utils/cn";
 
 export const FloatingDock = ({
   items,

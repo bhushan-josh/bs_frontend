@@ -17,7 +17,7 @@ const HeroSection: React.FC = () => {
             <div className="flex-shrink-0">
               <a href="#" className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2">
                 <img
-                  className="w-auto h-12"
+                  className="w-auto h-10"
                   src="src/assets/images/logo.svg"
                   alt="Logo"
                 />
@@ -69,7 +69,7 @@ const HeroSection: React.FC = () => {
                   href="#"
                   className="inline-flex items-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-xl hover:bg-gray-600 focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
                 >
-                  Log In
+                  Invite
                 </a>
                 <a
                   href="#"
@@ -78,7 +78,7 @@ const HeroSection: React.FC = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                   </svg>
-                  Create Account
+                  Create a Transaction
                 </a>
               </div>
             </div>
@@ -93,4 +93,3 @@ const HeroSection: React.FC = () => {
 };
 
 export default HeroSection;
-

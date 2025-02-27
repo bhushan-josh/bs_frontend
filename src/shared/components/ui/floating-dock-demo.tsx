@@ -1,7 +1,8 @@
-import { FloatingDock } from "../components/ui/floating-dock";
+import { FloatingDock } from "../../container/floating-dock";
 import {
   IconCurrencyRupee,
   IconHome,
+  IconPlus,
   IconUser,
   IconUsersGroup,
 } from "@tabler/icons-react";
@@ -29,6 +30,13 @@ export function FloatingDockDemo() {
       ),
       href: "/groups",
     },
+    {
+      title: "Add_expense",
+      icon: (
+        <IconPlus className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "/create_transactions",
+    },
 
     {
       title: "Transactions",
@@ -44,7 +52,7 @@ export function FloatingDockDemo() {
           src="/icon.png"
           width={40}
           height={40}
-          alt="Aceternity Logo"
+          alt="BillSplitter Logo"
         />
       ),
       href: "/profile",
