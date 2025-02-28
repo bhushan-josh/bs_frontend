@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authApi } from "./slices/authslice.ts";
+import authApi from "../pages/auth/login/authapi";
 // import usersReducer from "./slices/usersSlice";
 // import groupsReducer from "./slices/groupsSlice";
 // import transactionsReducer from "./slices/transactionsSlice";
@@ -16,10 +16,10 @@ export const store = configureStore({
   // },
 
   reducer: {
-    [authApi.reducerPath]: authApi.reducer, // RTK Query reducer
+    [authApi.reducerPath]: authApi.reducer, 
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware), // Add API middleware
+    getDefaultMiddleware().concat(authApi.middleware), 
 });
 
 // Infer types for better TypeScript support

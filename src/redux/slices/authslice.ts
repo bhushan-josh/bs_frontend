@@ -1,64 +1,35 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createSlice } from "@reduxjs/toolkit";
+import { authApi } from "../../pages/auth/login/authapi";
 
-//type lihi sperate
-interface User {
-  id: number;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  email: string;
+interface AuthState {
+  token: string | null;
 }
 
-interface LoginResponse {
-  success: boolean;
-  data: {
-    token: string;
-    user: User;
-  };
-}
+const initialState: AuthState = {
+  token: localStorage.getItem("token") || null,
+};
 
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-// Service lihi
-export const authApi = createApi({
-  reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000",
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        headers.set("Authorization", token);
-      }
-      headers.set("Accept", "application/vnd.billsplitter.com; version=1");
-      headers.set("Content-Type", "application/json");
-      return headers;
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    logout: (state) => {
+      state.token = null;
+      localStorage.removeItem("token"); 
     },
-  }),
-  endpoints: (builder) => ({
-    loginUser: builder.mutation<LoginResponse, LoginRequest>({
-      query: (credentials) => ({
-        url: "/login",
-        method: "POST",
-        body: credentials,
-      }),
-      transformResponse: (response: LoginResponse) => {
-        if (response.success && response.data.token) {
-          localStorage.setItem("token", response.data.token);
+  },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      authApi.endpoints.loginUser.matchFulfilled,
+      (state, { payload }) => {
+        if (payload.success) {
+          state.token = payload.data.token;
+          localStorage.setItem("token", payload.data.token); 
         }
-        return response;
-      },
-    }),
-    logoutUser: builder.mutation<void, void>({
-      queryFn: async () => {
-        localStorage.removeItem("token");
-        return { data: undefined };
-      },
-    }),
-  }),
+      }
+    );
+  },
 });
 
-export const { useLoginUserMutation, useLogoutUserMutation } = authApi;
-export default authApi.reducer; // Export reducer for store
+export const { logout } = authSlice.actions;
+export default authSlice.reducer;
