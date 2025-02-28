@@ -5,12 +5,14 @@ import { FloatingDockDemo } from "./shared/components/ui/floating-dock-demo";
 import Landing from "./pages/landing/landing";
 import Friends from "./pages/friends/Friends";
 import Groups from "./pages/groups/Groups";
-import Login from "./pages/auth/login";
+import Login from "./pages/auth/login/login";
+import Logout from "./pages/auth/login/logout";
 
 function App() {
   return (
-    <BrowserRouter>
-      <div>
+    <div>
+      <BrowserRouter>
+      <Logout/>
         <div>
           <Routes>
             <Route path="/" element={<Landing />} />
@@ -22,9 +24,24 @@ function App() {
           </Routes>
         </div>
         <FloatingDockDemo />
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </div>
   );
 }
 
 export default App;
+
+// import { RouterProvider } from "react-router-dom";
+// import router from "./routes/router";
+// import { FloatingDockDemo } from "./shared/components/ui/floating-dock-demo";
+
+// function App() {
+//   return (
+//     <div className="app-container">
+//       <RouterProvider router={router} />
+//       <FloatingDockDemo />
+//     </div>
+//   );
+// }
+
+// export default App;
