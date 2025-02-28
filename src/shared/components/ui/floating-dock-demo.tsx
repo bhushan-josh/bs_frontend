@@ -58,9 +58,11 @@ export function FloatingDockDemo() {
       href: "/profile",
     },
   ];
+
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-50 dark:bg-neutral-900 shadow-lg rounded-full px-6 py-3">
-    <FloatingDock items={links} />
+      <FloatingDock items={links} />
     </div>
   );
 }
+

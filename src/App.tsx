@@ -5,7 +5,7 @@ import { FloatingDockDemo } from "./shared/components/ui/floating-dock-demo";
 import Landing from "./pages/landing/landing";
 import Friends from "./pages/friends/Friends";
 import Groups from "./pages/groups/Groups";
-import CreateTransaction from "./pages/create_transaction/create_transaction";
+import Login from "./pages/auth/login";
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/friends" element={<Friends />} />
             <Route path="/groups" element={<Groups />} />
-            <Route path="/create_transactions" element={<CreateTransaction />} />
+            <Route path="/create_transactions" element={<Login />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/profile" element={<Profile />} />
           </Routes>
