@@ -1,6 +1,8 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="relative bg-gray-50 min-h-screen flex flex-col">
       <div className="absolute bottom-0 right-0 overflow-hidden lg:inset-y-0">
@@ -17,7 +19,7 @@ const HeroSection: React.FC = () => {
             <div className="flex-shrink-0">
               <a href="#" className="flex rounded outline-none focus:ring-1 focus:ring-gray-900 focus:ring-offset-2">
                 <img
-                  className="w-auto h-8"
+                  className="w-auto h-10"
                   src="src/assets/images/logo.svg"
                   alt="Logo"
                 />
@@ -31,8 +33,6 @@ const HeroSection: React.FC = () => {
                 </svg>
               </button>
             </div>
-
-
           </div>
         </div>
       </header>
@@ -49,26 +49,37 @@ const HeroSection: React.FC = () => {
                 <div className="mt-8 lg:mt-12 lg:flex lg:items-center">
                   
                   <p className="mt-4 text-lg text-gray-900 lg:mt-0 lg:ml-4">
-                    Join with <span className="font-bold">4600+ Developers</span> and start getting feedback now
+                    Keep track of your shared expenses and balances with housemates, trips, groups, friends, and family.
                   </p>
                 </div>
               </div>
               <div className="mt-8 sm:flex sm:items-center sm:justify-center lg:justify-start sm:space-x-5 lg:mt-12">
-                <a
-                  href="#"
+              <button
                   className="inline-flex items-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 rounded-xl hover:bg-gray-600 focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                  onClick={() => navigate("*")}
                 >
-                  Get feedback
-                </a>
-                <a
-                  href="#"
+                  Invite
+                </button>
+                <button
+                  onClick={() => navigate("/create_transactions")}
                   className="inline-flex items-center px-4 py-4 mt-4 text-lg font-bold transition-all duration-200 bg-transparent border sm:mt-0 rounded-xl hover:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-300"
                 >
-                  <svg className="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                    />
                   </svg>
-                  Download iOS App
-                </a>
+                  Create a Transaction
+                </button>
               </div>
             </div>
             <div className="xl:col-span-3">
@@ -76,11 +87,9 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
         </div>
-
       </section>
     </div>
   );
 };
 
 export default HeroSection;
-

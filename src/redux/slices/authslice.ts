@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { authApi } from "../../pages/auth/login/authapi";
+import { authApi } from "../../pages/auth/authapi";
 
 interface AuthState {
   token: string | null;
@@ -15,16 +15,17 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.token = null;
-      localStorage.removeItem("token"); 
+      localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
       authApi.endpoints.loginUser.matchFulfilled,
       (state, { payload }) => {
-        if (payload.success) {
-          state.token = payload.data.token;
-          localStorage.setItem("token", payload.data.token); 
+        const token = payload?.data?.token;
+        if (token) {
+          state.token = token;
+          localStorage.setItem("token", token);
         }
       }
     );

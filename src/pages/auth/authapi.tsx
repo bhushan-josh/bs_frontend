@@ -9,7 +9,7 @@ export const authApi = createApi({
     prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
       if (token) {
-        headers.set("Authorization", token);
+        headers.set("Authorization", token); 
       }
       headers.set("Accept", "application/vnd.billsplitter.com; version=1");
       headers.set("Content-Type", "application/json");
@@ -34,6 +34,15 @@ export const authApi = createApi({
         }
       },
     }),
+
+    signupUser: builder.mutation<{ success: boolean }, { first_name: string; last_name: string; phone: string; email: string; password: string }>({
+      query: (userData) => ({
+        url: "/signup",
+        method: "POST",
+        body: userData,
+      }),
+    }),
+
     logoutUser: builder.mutation<void, void>({
       queryFn: async () => {
         localStorage.removeItem("token");
@@ -43,5 +52,5 @@ export const authApi = createApi({
   }),
 });
 
-export const { useLoginUserMutation, useLogoutUserMutation } = authApi; 
-export default authApi; 
+export const { useLoginUserMutation, useSignupUserMutation, useLogoutUserMutation } = authApi;
+export default authApi;

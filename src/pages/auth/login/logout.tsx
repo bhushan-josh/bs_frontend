@@ -1,11 +1,20 @@
-import { useLogoutUserMutation } from "./authapi";
+import { toast } from "sonner";
+import { useLogoutUserMutation } from "../authapi";
+import { useNavigate } from "react-router-dom";
 
 const Logout = () => {
   const [logoutUser] = useLogoutUserMutation();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logoutUser();
-    alert("Logged out!");
+    localStorage.removeItem("token"); 
+
+    const currentDateTime = new Date();
+
+    toast("Logged Out", {
+      description: currentDateTime.toTimeString()})
+    navigate("/"); 
   };
 
   return <button onClick={handleLogout}>Logout</button>;
