@@ -74,8 +74,8 @@ const Login = () => {
           <button
             onClick={handleLogin}
             disabled={isLoading}
-            className={`w-full h-12 text-white text-base font-semibold rounded-full transition-all duration-300 bg-indigo-600 shadow-sm mb-6 ${
-              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-800"
+            className={`w-full h-12 text-white text-base font-semibold rounded-full transition-all duration-300 bg-gray-800 shadow-sm mb-6 ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-600"
             }`}
           >
             {isLoading ? "Logging in..." : "Login"}
