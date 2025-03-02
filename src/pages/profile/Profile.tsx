@@ -22,7 +22,7 @@ const UserProfile = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-0">
-      <div className="relative w-[500px] bg-white rounded-3xl shadow-2xl p-8 text-center">
+      <div className="relative w-[550px] bg-white rounded-3xl shadow-2xl p-8 text-center">
         <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-36 h-36">
           <img
             src="src/assets/images/user.png"
@@ -31,9 +31,7 @@ const UserProfile = () => {
             />
         </div>
 
-        <div className="absolute top-5 right-5 text-gray-500 hover:text-gray-800 transition">
-          <Logout />
-        </div>
+
 
         <div className="mt-16 space-y-4">
           {isLoading && <p className="text-gray-500">Loading...</p>}
@@ -63,12 +61,17 @@ const UserProfile = () => {
 
         {!editMode && (
           <div className="mt-6">
-            <button
-              onClick={handleEditClick}
-              className="bg-blue-500 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-600 transition-transform transform hover:scale-105"
-            >
-              Edit Details
-            </button>
+            <div className="space-x-4">
+              <button
+                onClick={handleEditClick}
+                className="bg-blue-500 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-600 transition-transform transform hover:scale-105"
+              >
+                Update
+              </button>
+              <button className="bg-gray-500 text-white px-6 py-3 rounded-full shadow-md hover:bg-gray-600 transition-transform transform hover:scale-105">
+                <Logout />
+              </button>
+            </div>
           </div>
         )}
       </div>

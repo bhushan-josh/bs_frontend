@@ -1,15 +1,22 @@
+import { useGetUsersQuery } from "../friends/usersApi";
 import { useGetExpensesQuery, useGetSettlementsQuery } from "./transactinsApi";
 
 const Transactions = () => {
   const { data: expenses, error: expensesError, isLoading: expensesLoading } = useGetExpensesQuery();
   const { data: settlements, error: settlementsError, isLoading: settlementsLoading } = useGetSettlementsQuery();
+  const { data: users, error: usersError, isLoading: usersLoading } = useGetUsersQuery();
 
-  if (expensesLoading || settlementsLoading) return <p>Loading...</p>;
-  if (expensesError || settlementsError) return <p className="text-red-500">Error fetching transactions</p>;
+  if (expensesLoading || settlementsLoading || usersLoading) return <p>Loading...</p>;
+  if (expensesError || settlementsError || usersError) return <p className="text-red-500">Error fetching data</p>;
+
+  const usersMap = users?.reduce((acc, user) => {
+    acc[user.id] = `${user.first_name} ${user.last_name}`.trim(); 
+    return acc;
+  }, {} as Record<number, string>);
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4"> Transactions </h2>
+      <h2 className="text-2xl font-bold mb-4">Transactions</h2>
 
       <div className="mb-6">
         <h3 className="text-xl font-semibold mb-2">Expenses</h3>
@@ -17,7 +24,7 @@ const Transactions = () => {
           <ul>
             {expenses.map((expense) => (
               <li key={expense.id} className="p-2 border-b">
-                Payer: {expense.payer_id}, Amount: {expense.amount}
+                Payer: {usersMap?.[expense.payer_id] || "Unknown"}, Amount: {expense.amount}
               </li>
             ))}
           </ul>
@@ -32,7 +39,9 @@ const Transactions = () => {
           <ul>
             {settlements.map((settlement) => (
               <li key={settlement.id} className="p-2 border-b">
-                Payer: {settlement.payer_id}, Payee: {settlement.payee_id}, Amount: {settlement.amount}
+                Payer: {usersMap?.[settlement.payer_id] || "Unknown"},
+                Payee: {usersMap?.[settlement.payee_id] || "Unknown"},
+                Amount: {settlement.amount}
               </li>
             ))}
           </ul>
