@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useUpdateUserMutation } from "./api";
+import { useUpdateUserMutation } from "./userApi";
 
 interface EditProfileFormProps {
   userId: number;
@@ -15,16 +15,14 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ userId, firstName, la
   const [formData, setFormData] = useState({ first_name: firstName, last_name: lastName, email, phone });
   const [updateUser, { isLoading }] = useUpdateUserMutation();
 
-  // Handle Input Change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Save Button
   const handleSave = async () => {
     try {
       await updateUser({ userId, ...formData }).unwrap();
-      onSaveSuccess(); // Refresh user data
+      onSaveSuccess();
     } catch (err) {
       console.error("Error updating user:", err);
     }

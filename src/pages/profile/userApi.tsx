@@ -19,7 +19,6 @@ export const userApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    // Fetch User Data
     getUserData: builder.query<
       { id: number; first_name: string; last_name: string; phone: string; email: string; full_name: string },
       { userId: number }
@@ -30,14 +29,13 @@ export const userApi = createApi({
       }),
     }),
 
-    // ✅ Update User Data
     updateUser: builder.mutation<
       { message: string; user: { id: number; first_name: string; last_name: string; phone: string; email: string } },
       { userId: number; full_name: string; phone: string; email: string }
     >({
       query: ({ userId, ...body }) => ({
         url: `/users/${userId}`,
-        method: "PATCH", // Use PATCH if you only update specific fields
+        method: "PATCH",
         body,
       }),
     }),

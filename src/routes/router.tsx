@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import Landing from "../pages/landing/landing";
 import Friends from "../pages/friends/Friends";
-import Groups from "../pages/groups/Groups";
-import Transactions from "../pages/transactions/Transactions";
+import Groups from "../pages/groups/group";
+import Transactions from "../pages/transactions/expenses";
 import Profile from "../pages/profile/Profile";
 
 const router = createBrowserRouter([

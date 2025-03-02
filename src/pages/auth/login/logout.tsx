@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { useLogoutUserMutation } from "../authapi";
+import { useLogoutUserMutation } from "../authApi";
 import { useNavigate } from "react-router-dom";
 
 const Logout = () => {

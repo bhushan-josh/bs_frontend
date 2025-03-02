@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSignupUserMutation } from "../authapi";
+import { useSignupUserMutation } from "../authApi";
 import { toast } from "sonner";
 
 const Signup = () => {

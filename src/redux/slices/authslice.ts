@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { authApi } from "../../pages/auth/authapi";
+import { authApi } from "../../pages/auth/authApi";
 
 interface AuthState {
   token: string | null;

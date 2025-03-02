@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { useGetUserDataQuery } from "./api";
+import { useGetUserDataQuery } from "./userApi";
 import Logout from "../auth/login/logout";
 import { useState } from "react";
 import EditProfileForm from "./editprofile";
@@ -9,15 +9,12 @@ const UserProfile = () => {
   const userId = useSelector((state: RootState) => state.auth.userData.id);
   const { data, error, isLoading, refetch } = useGetUserDataQuery({ userId });
 
-  // State for edit mode
   const [editMode, setEditMode] = useState(false);
 
-  // Handle Edit Click
   const handleEditClick = () => {
     setEditMode(true);
   };
 
-  // Handle Save Success
   const handleSaveSuccess = () => {
     setEditMode(false);
     refetch(); // Refresh user data
@@ -26,21 +23,18 @@ const UserProfile = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-0">
       <div className="relative w-[500px] bg-white rounded-3xl shadow-2xl p-8 text-center">
-        {/* Profile Image */}
         <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 w-36 h-36">
           <img
             src="src/assets/images/user.png"
             alt="Profile"
             className="w-full h-full object-cover rounded-full border-4 border-white shadow-lg"
-          />
+            />
         </div>
 
-        {/* Logout Button */}
         <div className="absolute top-5 right-5 text-gray-500 hover:text-gray-800 transition">
           <Logout />
         </div>
 
-        {/* User Details */}
         <div className="mt-16 space-y-4">
           {isLoading && <p className="text-gray-500">Loading...</p>}
           {error && <p className="text-red-500">Error fetching user data</p>}
@@ -67,7 +61,6 @@ const UserProfile = () => {
           )}
         </div>
 
-        {/* Edit Button */}
         {!editMode && (
           <div className="mt-6">
             <button
