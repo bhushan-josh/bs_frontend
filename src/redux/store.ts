@@ -4,9 +4,10 @@ import userReducer from "./slices/userslice.ts";
 import groupsReducer from "./slices/groupsslice.ts";
 import { authApi } from "../pages/auth/authApi.tsx";
 import { usersApi } from "../pages/friends/usersApi.tsx";
-import { userApi } from "../pages/profile/userApi.tsx"; // Ensure this API exists
+import { userApi } from "../pages/profile/userApi.tsx"; 
 import { groupsApi } from "../pages/groups/groupApi.tsx";
 import { transactionsApi } from "../pages/transactions/transactinsApi.tsx";
+import { balanceApi } from "../pages/friends/balanceApi.ts";
 
 export const store = configureStore({
   reducer: {
@@ -14,19 +15,21 @@ export const store = configureStore({
     users: userReducer,
     groups: groupsReducer,
     [authApi.reducerPath]: authApi.reducer,
-    [userApi.reducerPath]: userApi.reducer, // Added if needed
+    [userApi.reducerPath]: userApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
     [groupsApi.reducerPath]: groupsApi.reducer,
     [transactionsApi.reducerPath]: transactionsApi.reducer,
+    [balanceApi.reducerPath]: balanceApi.reducer, 
+
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       authApi.middleware, 
-      userApi.middleware, // Added if needed
+      userApi.middleware, 
       usersApi.middleware, 
       groupsApi.middleware, 
-      transactionsApi.middleware
-
+      transactionsApi.middleware,
+      balanceApi.middleware
     ), 
 });
 

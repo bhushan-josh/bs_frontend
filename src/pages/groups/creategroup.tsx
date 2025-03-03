@@ -1,23 +1,26 @@
 import { useState, useEffect } from "react";
-import { useCreateGroupMutation } from "./groupApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast } from "sonner";
-import FetchUsers from "../friends/fetchusers";
-import { useGetUsersQuery } from "../friends/usersApi";
+import { useGetUsersQuery, usersApi } from "../friends/usersApi";
+import { useCreateGroupMutation, useGetGroupsQuery } from "./groupApi";
+import { addGroup, setGroups } from "../../redux/slices/groupsslice";
 
 const CreateGroup = () => {
+  const dispatch = useDispatch();
+  
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [members, setMembers] = useState<number[]>([]);
+
+  const { data: users = [] } = useGetUsersQuery(); // Fetch users
+  const { refetch } = useGetGroupsQuery(); // Fetch groups
   const [createGroup, { isLoading }] = useCreateGroupMutation();
 
   const currentUser = useSelector((state: RootState) => state.auth.userData);
-  const { data: users = [], refetch } = useGetUsersQuery(); // Fetch & refetch users
 
-  // Debugging: Check if users are loaded
   useEffect(() => {
-    console.log("Users in Redux:", users);
+    console.log("Users loaded:", users);
   }, [users]);
 
   const handleAddMember = (memberId: number) => {
@@ -33,37 +36,54 @@ const CreateGroup = () => {
   };
 
   const handleSubmit = async () => {
-    if (!name || !description || members.length === 0) {
-      toast.error("Please fill all fields and add at least one member.");
+    if (!name.trim()) {
+      toast.error("Group name is required.");
+      return;
+    }
+
+    if (members.length === 0) {
+      toast.error("At least one member is required.");
+      return;
+    }
+
+    if (!currentUser?.id) {
+      toast.error("Error: No authenticated user.");
+      console.error("No authenticated user found:", currentUser);
       return;
     }
 
     try {
       const payload = {
         name,
-        creator_id: currentUser?.id,
+        creator_id: currentUser.id,
         description,
         group_members_attributes: members.map((id) => ({ member_id: id })),
       };
 
-      await createGroup(payload).unwrap();
+      console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
+
+      const newGroup = await createGroup(payload).unwrap();
+
+      dispatch(addGroup(newGroup));
 
       toast.success("Group created successfully!");
-      refetch(); // ✅ Refetch users after creating a group
+
+      const { data: updatedGroups } = await refetch();
+      if (updatedGroups) {
+        dispatch(setGroups(updatedGroups)); 
+      }
 
       setName("");
       setDescription("");
       setMembers([]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating group:", error);
-      toast.error("Failed to create group.");
+      toast.error(error?.data?.message || "Failed to create group.");
     }
   };
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg max-w-md mx-auto">
-      <FetchUsers /> {/* Ensures users are fetched at component load */}
-
       <h2 className="text-xl font-bold mb-4">Create a New Group</h2>
 
       <input
@@ -78,11 +98,10 @@ const CreateGroup = () => {
         type="text"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Group Description"
+        placeholder="Group Description (Optional)"
         className="w-full p-2 border rounded mb-2"
       />
 
-      {/* Users Dropdown */}
       <label className="block font-medium mb-2">Select Members</label>
       <select
         onChange={(e) => handleAddMember(Number(e.target.value))}
@@ -96,7 +115,6 @@ const CreateGroup = () => {
         ))}
       </select>
 
-      {/* Selected Members List */}
       {members.length > 0 && (
         <div className="mb-4">
           <h3 className="font-medium mb-2">Selected Members</h3>
@@ -105,7 +123,9 @@ const CreateGroup = () => {
             return (
               <div key={id} className="flex justify-between items-center bg-gray-100 p-2 rounded mb-1">
                 <span>{user ? `${user.first_name} ${user.last_name}` : `User ID: ${id}`}</span>
-                <button className="text-red-500" onClick={() => handleRemoveMember(id)}>Remove</button>
+                <button className="text-red-500" onClick={() => handleRemoveMember(id)}>
+                  Remove
+                </button>
               </div>
             );
           })}
@@ -124,3 +144,5 @@ const CreateGroup = () => {
 };
 
 export default CreateGroup;
+
+

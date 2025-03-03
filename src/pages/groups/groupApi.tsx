@@ -6,7 +6,7 @@ export const groupsApi = createApi({
   reducerPath: "groupsApi",
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
-    prepareHeaders: (headers) => { 
+    prepareHeaders: (headers) => {
       const token = localStorage.getItem("token");
       if (token) {
         headers.set("Authorization", token);
@@ -22,7 +22,12 @@ export const groupsApi = createApi({
       transformResponse: (response: { success: boolean; message: string; data: any[] }) => response.data,
     }),
 
-    createGroup: builder.mutation({
+    getGroup: builder.query<any, number>({
+      query: (groupId) => `/groups/${groupId}`,
+      transformResponse: (response: { success: boolean; message: string; data: any }) => response.data,
+    }),
+
+    createGroup: builder.mutation<any, { name: string; description?: string }>({
       query: (newGroup) => ({
         url: "/groups",
         method: "POST",
@@ -30,7 +35,7 @@ export const groupsApi = createApi({
       }),
     }),
 
-    updateGroup: builder.mutation({
+    updateGroup: builder.mutation<any, { id: number; updatedGroup: any }>({
       query: ({ id, updatedGroup }) => ({
         url: `/groups/${id}`,
         method: "PUT",
@@ -38,7 +43,7 @@ export const groupsApi = createApi({
       }),
     }),
 
-    deleteGroup: builder.mutation({
+    deleteGroup: builder.mutation<void, number>({
       query: (id) => ({
         url: `/groups/${id}`,
         method: "DELETE",
@@ -47,9 +52,10 @@ export const groupsApi = createApi({
   }),
 });
 
-export const { 
-  useGetGroupsQuery, 
-  useCreateGroupMutation, 
-  useUpdateGroupMutation, 
-  useDeleteGroupMutation 
+export const {
+  useGetGroupsQuery,
+  useGetGroupQuery, 
+  useCreateGroupMutation,
+  useUpdateGroupMutation,
+  useDeleteGroupMutation,
 } = groupsApi;

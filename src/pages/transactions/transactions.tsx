@@ -24,7 +24,7 @@ const Transactions = () => {
           <ul>
             {expenses.map((expense) => (
               <li key={expense.id} className="p-2 border-b">
-                Payer: {usersMap?.[expense.payer_id] || "Unknown"}, Amount: {expense.amount}
+                Payer: {usersMap?.[expense.payer_id] || "Unknown"},Payee: {usersMap?.[expense.payee_id] || "Unknown"} Amount: {expense.amount}
               </li>
             ))}
           </ul>

@@ -18,7 +18,7 @@ export const transactionsApi = createApi({
   }),
   endpoints: (builder) => ({
     getExpenses: builder.query<any[], void>({
-      query: () => "/expenses",
+      query: () => "/expense_splits",
       transformResponse: (response: { success: boolean; message: string; data: any[] }) => response.data,
     }),
     getSettlements: builder.query<any[], void>({

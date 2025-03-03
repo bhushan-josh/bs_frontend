@@ -14,6 +14,7 @@ import Transactions from "./pages/transactions/transactions";
 import FetchUsers from "./pages/friends/fetchusers";
 import UsersList from "./pages/friends/friends";
 import TryProfile from "./pages/profile/Profile";
+import DebugAuth from "./pages/groups/debug";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
@@ -43,6 +44,7 @@ function App() {
         {/* <FloatingDockDemo/> */}
         <Toaster/>
         <FetchUsers/>
+        {/* <DebugAuth/> */}
     </Router>
   );
 }
