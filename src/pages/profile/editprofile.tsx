@@ -1,18 +1,24 @@
 import { useState } from "react";
 import { useUpdateUserMutation } from "./userApi";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { setAuth } from "../../redux/slices/authslice";
 
 interface EditProfileFormProps {
-  userId: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
   onCancel: () => void;
-  onSaveSuccess: () => void;
 }
 
-const EditProfileForm: React.FC<EditProfileFormProps> = ({ userId, firstName, lastName, email, phone, onCancel, onSaveSuccess }) => {
-  const [formData, setFormData] = useState({ first_name: firstName, last_name: lastName, email, phone });
+const EditProfileForm: React.FC<EditProfileFormProps> = ({ onCancel }) => {
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state: RootState) => state.auth.userData);
+
+  const [formData, setFormData] = useState({
+    first_name: currentUser?.first_name || "",
+    last_name: currentUser?.last_name || "",
+    email: currentUser?.email || "",
+    phone: currentUser?.phone || "",
+  });
+
   const [updateUser, { isLoading }] = useUpdateUserMutation();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,8 +27,14 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ userId, firstName, la
 
   const handleSave = async () => {
     try {
-      await updateUser({ userId, ...formData }).unwrap();
-      onSaveSuccess();
+      const response = await updateUser({ id: currentUser.id, updatedData: formData }).unwrap();
+      
+      // Update Redux & LocalStorage
+      const updatedUserData = response.data.data;
+      dispatch(setAuth({ token: localStorage.getItem("token"), userData: updatedUserData }));
+      localStorage.setItem("userData", JSON.stringify(updatedUserData));
+
+      onCancel(); // Close the form
     } catch (err) {
       console.error("Error updating user:", err);
     }
@@ -36,15 +48,15 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ userId, firstName, la
         value={formData.first_name}
         onChange={handleChange}
         className="w-full border rounded-lg p-2 text-lg"
-        placeholder="first_name"
+        placeholder="First Name"
       />
-        <input
+      <input
         type="text"
         name="last_name"
         value={formData.last_name}
         onChange={handleChange}
         className="w-full border rounded-lg p-2 text-lg"
-        placeholder="last_name"
+        placeholder="Last Name"
       />
       <input
         type="email"
@@ -68,6 +80,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ userId, firstName, la
         <button
           onClick={handleSave}
           className="bg-green-500 text-white px-6 py-3 rounded-full shadow-md hover:bg-green-600 transition-transform transform hover:scale-105"
+          disabled={isLoading}
         >
           {isLoading ? "Saving..." : "Save"}
         </button>

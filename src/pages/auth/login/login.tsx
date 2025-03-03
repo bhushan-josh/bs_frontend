@@ -1,55 +1,57 @@
 import { useState } from "react";
 import { useLoginUserMutation } from "../authApi";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { setAuth } from "../../../redux/slices/authslice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [loginUser, { isLoading, error }] = useLoginUserMutation();
 
   const handleLogin = async () => {
     try {
       const response = await loginUser({ email, password }).unwrap();
+      
+      const { token, ...userData } = response.data;
 
-      localStorage.setItem("token", response.data.token);
+      // Save to Redux & LocalStorage
+      dispatch(setAuth({ token, userData }));
+      localStorage.setItem("token", token);
+      localStorage.setItem("userData", JSON.stringify(userData));
 
-      const currentDateTime = new Date();
-      toast("Log in Successfully", {
-        description: currentDateTime.toTimeString()})
+      toast.success("Logged in successfully", {
+        description: new Date().toTimeString(),
+      });
+
       navigate("/home");
     } catch (err) {
       console.error("Login failed:", err);
+      toast.error("Login failed. Please check your credentials.");
     }
   };
 
   return (
-    <div>
     <div className="font-inter overflow-hidden flex justify-center relative min-h-screen bg-gray-100">
-      {/* <img
-        src="https://pagedone.io/asset/uploads/1702362010.png"
-        alt="gradient background"
-        className="w-full h-full object-cover fixed"
-      /> */}
-
       <div className="mx-auto max-w-lg px-6 lg:px-8 absolute py-20">
         <img
           src="src/assets/images/logo.webp"
           alt="billspitter logo"
           className="mx-auto lg:mb-11 mb-8 object-cover"
-          onClick={()=> navigate("/")}
+          onClick={() => navigate("/")}
         />
-            {/* <span onClick={() => navigate("/")} className="test-indigo-600 font-semibold pl-2 cursor-pointer">
-        Go back
-      </span> */}
 
         <div className="rounded-2xl bg-white shadow-xl p-7 lg:p-11">
           <h1 className="text-gray-900 text-center text-3xl font-bold mb-2">Welcome Back</h1>
-          <p className="text-gray-500 text-center text-base font-medium mb-6">Let Split the bills for better accountablity</p>
+          <p className="text-gray-500 text-center text-base font-medium mb-6">
+            Let’s split the bills for better accountability.
+          </p>
 
-          {error && <p className="text-red-600 text-center mb-4">Login failed. Please check your credentials.</p>}
+          {error && <p className="text-red-600 text-center mb-4">Login failed. Try again.</p>}
 
           <input
             type="email"
@@ -91,7 +93,6 @@ const Login = () => {
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };

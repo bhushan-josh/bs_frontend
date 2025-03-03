@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { setCurrentUser } from "../../redux/slices/userslice";
 
 const API_URL = "http://localhost:3000";
 
@@ -23,9 +24,10 @@ export const authApi = createApi({
         method: "POST",
         body: credentials,
       }),
-      async onQueryStarted(arg, { queryFulfilled }) {
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          dispatch(setCurrentUser(data.user));
           if (data.success) {
             localStorage.setItem("token", data.data.token);
           }
