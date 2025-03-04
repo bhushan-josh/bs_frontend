@@ -6,7 +6,7 @@ import { useGetUsersQuery, usersApi } from "../friends/usersApi";
 import { useCreateGroupMutation, useGetGroupsQuery } from "./groupApi";
 import { addGroup, setGroups } from "../../redux/slices/groupsslice";
 
-const CreateGroup = () => {
+const CreateGroup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const dispatch = useDispatch();
   
   const [name, setName] = useState("");
@@ -76,6 +76,7 @@ const CreateGroup = () => {
       setName("");
       setDescription("");
       setMembers([]);
+      onClose()
     } catch (error: any) {
       console.error("Error creating group:", error);
       toast.error(error?.data?.message || "Failed to create group.");

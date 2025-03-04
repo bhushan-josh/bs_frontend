@@ -8,12 +8,12 @@ import HomePage from "./pages/home/home";
 import Signup from "./pages/auth/signup/signup";
 import { Toaster } from "sonner";
 import ErrorPage from "./shared/404erroe";
-import CreateTransaction from "./pages/create_transaction/create_transaction";
 import GroupsList from "./pages/groups/group";
 import Transactions from "./pages/transactions/transactions";
 import FetchUsers from "./pages/friends/fetchusers";
 import UsersList from "./pages/friends/friends";
 import ProfilePage from "./pages/profile/profile";
+import CreateTransaction from "./pages/transactions/create_transaction";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
@@ -48,3 +48,5 @@ function App() {
 }
 
 export default App;
+
+

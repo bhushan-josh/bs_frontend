@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { useGetGroupQuery } from "../groups/groupApi";
+import { useGetUsersQuery } from "../friends/usersApi";
 import { useCreateExpenseMutation } from "./expenseApi";
 
 interface CreateExpenseProps {
@@ -17,9 +18,19 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
     error: groupError,
   } = useGetGroupQuery(groupId);
 
-  console.log("Group ID:", groupId); // Debugging
-  console.log("Group Details Response:", groupDetails); // Debugging
-  console.log("Error:", groupError); // Debugging
+  // Fetch all users
+  const {
+    data: users = [],
+    isLoading: isUsersLoading,
+    isError: isUsersError,
+    error: usersError,
+  } = useGetUsersQuery();
+
+  // Map group members to their user details
+  const getMemberName = (memberId: number) => {
+    const user = users.find((user) => user.id === memberId);
+    return user ? `${user.first_name} ${user.last_name}` : `User ${memberId}`;
+  };
 
   // State for form inputs
   const [payerId, setPayerId] = useState<number | null>(null);
@@ -43,7 +54,7 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
     if (splitType === "equal") {
       // Split equally among all group members except the payer
       const payees = groupDetails?.group_members.filter((member) => member.member_id !== payerId) || [];
-      const splitAmount = (amount / payees.length).toFixed(2);
+      const splitAmount = (amount / (payees.length+1)).toFixed(2);
       expenseSplits = payees.map((member) => ({
         payer_id: payerId,
         payee_id: member.member_id,
@@ -93,14 +104,14 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
     setManualSplits(updatedSplits);
   };
 
-  if (isGroupLoading) {
+  if (isGroupLoading || isUsersLoading) {
     return <p className="text-gray-500">Loading group details...</p>;
   }
 
-  if (isGroupError) {
+  if (isGroupError || isUsersError) {
     return (
       <p className="text-red-500">
-        Error loading group details: {groupError?.message || "Unknown error"}
+        Error loading data: {groupError?.message || usersError?.message || "Unknown error"}
       </p>
     );
   }
@@ -123,7 +134,7 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
         <option value="">Select Payer</option>
         {groupDetails.group_members.map((member) => (
           <option key={member.member_id} value={member.member_id}>
-            {member.member_id} {/* Replace with user name if available */}
+            {getMemberName(member.member_id)}
           </option>
         ))}
       </select>
@@ -175,7 +186,7 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
                   .filter((member) => member.member_id !== payerId) // Exclude the payer
                   .map((member) => (
                     <option key={member.member_id} value={member.member_id}>
-                      {member.member_id} {/* Replace with user name if available */}
+                      {getMemberName(member.member_id)}
                     </option>
                   ))}
               </select>

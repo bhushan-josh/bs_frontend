@@ -5,24 +5,19 @@ import CreateGroup from "./creategroup";
 import ErrorBoundary from "../../shared/ErrorBoundary";
 import { useGetGroupsQuery } from "./groupApi";
 import useDeleteGroup from "./deletegroup";
-import CreateExpense from "../create_transaction/expense";
 import GroupDetails from "./groupdetails";
-
-interface Group {
-  id: number;
-  name: string;
-  description: string;
-  creator_id: number;
-}
+import CreateExpense from "../transactions/expense";
 
 const GroupsList: React.FC = () => {
   const dispatch = useDispatch();
-  const { data: groups, isSuccess, isError, error } = useGetGroupsQuery();
+  const { data: groups, isSuccess } = useGetGroupsQuery();
   const storedGroups = useSelector(selectGroups);
   const { handleDeleteGroup } = useDeleteGroup();
 
   const [creatingExpenseGroup, setCreatingExpenseGroup] = useState<number | null>(null);
   const [viewingGroupId, setViewingGroupId] = useState<number | null>(null);
+  const [isCreatingGroup, setIsCreatingGroup] = useState<boolean>(false); // Modal State
+  
 
   useEffect(() => {
     if (isSuccess && groups) {
@@ -30,20 +25,16 @@ const GroupsList: React.FC = () => {
     }
   }, [isSuccess, groups, dispatch]);
 
-  if (isError) {
-    return <p className="text-red-500">Error loading groups: {error?.message}</p>;
-  }
-
-  if (!storedGroups || storedGroups.length === 0) {
-    return <p className="text-gray-500">No groups available. Create a new group to get started.</p>;
-  }
+ 
 
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Groups List</h2>
-      <ErrorBoundary>
-        <CreateGroup />
-      </ErrorBoundary>
+      <button
+        onClick={() => setIsCreatingGroup(true)}
+        className="text-green-500 hover:text-green-700">
+        Create Group
+      </button>
 
       <ul>
         {storedGroups.map((group) => (
@@ -89,6 +80,20 @@ const GroupsList: React.FC = () => {
             <ErrorBoundary>
               <GroupDetails groupId={viewingGroupId} onClose={() => setViewingGroupId(null)} />
             </ErrorBoundary>
+          </div>
+        </div>
+      )}
+      {isCreatingGroup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-lg font-semibold mb-4">Create New Group</h3>
+            <CreateGroup onClose={() => setIsCreatingGroup(false)} />
+            <button
+              onClick={() => setIsCreatingGroup(false)}
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-700"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

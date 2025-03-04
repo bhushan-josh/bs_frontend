@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectUsers } from "../../redux/slices/userslice";
+import { useGetBalanceQuery } from "./balanceApi";
 import { toast } from "sonner";
-import { RootState } from "../../redux/store";
 import { useSettleBalanceMutation } from "../transactions/settlementApi";
-import { useCreateExpenseSplitMutation, useGetBalanceQuery } from "../transactions/expenseApi";
+import { useCreateExpenseMutation } from "./expenseu2uApi";
+import { RootState } from "../../redux/store";
 
 const UsersList = () => {
   const users = useSelector(selectUsers) || [];
   const [settleBalance] = useSettleBalanceMutation();
-  const [createExpense] = useCreateExpenseSplitMutation();
+  const [createExpense] = useCreateExpenseMutation();
   const currentUser = useSelector((state: RootState) => state.auth.userData); // Get current user from Redux
 
   // State for the settlement modal
@@ -18,20 +19,28 @@ const UsersList = () => {
   const [selectedUser, setSelectedUser] = useState<{ id: number; balance: number } | null>(null);
   const [amount, setAmount] = useState<number>(0);
 
-  // Fetch balance for the selected user
-  const { data: balanceData, error, isFetching, refetch} = useGetBalanceQuery(selectedUser?.id || 0, {
-    skip: !selectedUser, // Skip the query if no user is selected
+  // Fetch balance for each user
+  const userBalances = users.map((user) => {
+    const { data: balanceData, error, isFetching, refetch } = useGetBalanceQuery(user.id);
+    return { userId: user.id, balanceData, error, isFetching, refetch };
   });
+
+  // Refetch all balances when the component mounts
+  useEffect(() => {
+    userBalances.forEach((balance) => balance.refetch());
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   // Handle the "Settle" button click
   const handleSettleClick = (userId: number) => {
-    setSelectedUser({ id: userId, balance: balanceData?.balance || 0 });
+    const selectedBalance = userBalances.find((balance) => balance.userId === userId);
+    setSelectedUser({ id: userId, balance: selectedBalance?.balanceData?.balance || 0 });
     setIsSettleModalOpen(true);
   };
 
   // Handle the "Expense" button click
   const handleExpenseClick = (userId: number) => {
-    setSelectedUser({ id: userId, balance: balanceData?.balance || 0 });
+    const selectedBalance = userBalances.find((balance) => balance.userId === userId);
+    setSelectedUser({ id: userId, balance: selectedBalance?.balanceData?.balance || 0 });
     setIsExpenseModalOpen(true);
   };
 
@@ -44,7 +53,7 @@ const UsersList = () => {
       await settleBalance(payload).unwrap();
       toast.success("Settlement successful!");
       setIsSettleModalOpen(false); // Close the modal after successful settlement
-      refetch();
+      userBalances.forEach((balance) => balance.refetch()); // Refetch all balances
     } catch (error: any) {
       console.error("Error settling balance:", error);
       toast.error(error?.data?.message || "Failed to settle balance.");
@@ -64,7 +73,7 @@ const UsersList = () => {
       await createExpense(payload).unwrap();
       toast.success("Expense created successfully!");
       setIsExpenseModalOpen(false); // Close the modal after successful expense creation
-      refetch();
+      userBalances.forEach((balance) => balance.refetch()); // Refetch all balances
     } catch (error: any) {
       console.error("Error creating expense:", error);
       toast.error(error?.data?.message || "Failed to create expense.");
@@ -83,7 +92,7 @@ const UsersList = () => {
           {users.map((user) => {
             if (!user?.id) return null; // Ensure user has an ID before calling API
 
-            const { data: balanceData, error, isFetching } = useGetBalanceQuery(user.id);
+            const userBalance = userBalances.find((balance) => balance.userId === user.id);
 
             return (
               <li key={user.id} className="p-3 bg-white rounded-lg shadow-md">
@@ -92,12 +101,12 @@ const UsersList = () => {
                 </p>
                 <p className="text-gray-500">{user.email}</p>
                 <p className="text-blue-600">
-                  Balance: {error ? (
+                  Balance: {userBalance?.error ? (
                     "Error loading balance"
-                  ) : isFetching ? (
+                  ) : userBalance?.isFetching ? (
                     "Loading..."
                   ) : (
-                    `${balanceData?.balance ?? 0} INR`
+                    `${userBalance?.balanceData?.balance ?? 0} INR`
                   )}
                 </p>
                 <button
@@ -131,12 +140,12 @@ const UsersList = () => {
               </span>?
             </p>
             <p className="text-blue-600 mt-2">
-              Current Balance: {error ? (
+              Current Balance: {userBalances.find((balance) => balance.userId === selectedUser.id)?.error ? (
                 "Error loading balance"
-              ) : isFetching ? (
+              ) : userBalances.find((balance) => balance.userId === selectedUser.id)?.isFetching ? (
                 "Loading..."
               ) : (
-                `${balanceData?.balance ?? 0} INR`
+                `${userBalances.find((balance) => balance.userId === selectedUser.id)?.balanceData?.balance ?? 0} INR`
               )}
             </p>
             <div className="flex justify-end space-x-2 mt-4">
