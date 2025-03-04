@@ -7,14 +7,13 @@ import Logout from "./pages/auth/login/logout";
 import HomePage from "./pages/home/home";
 import Signup from "./pages/auth/signup/signup";
 import { Toaster } from "sonner";
-import ErrorPage from "./pages/404erroe";
+import ErrorPage from "./shared/404erroe";
 import CreateTransaction from "./pages/create_transaction/create_transaction";
 import GroupsList from "./pages/groups/group";
 import Transactions from "./pages/transactions/transactions";
 import FetchUsers from "./pages/friends/fetchusers";
 import UsersList from "./pages/friends/friends";
-import TryProfile from "./pages/profile/Profile";
-import DebugAuth from "./pages/groups/debug";
+import ProfilePage from "./pages/profile/profile";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
@@ -36,15 +35,14 @@ function App() {
         <Route path="/groups" element={<PrivateRoute><><GroupsList /><FloatingDockDemo/></></PrivateRoute>} />
         <Route path="/create_transactions" element={<PrivateRoute><><CreateTransaction /><FloatingDockDemo/></></PrivateRoute>} />
         <Route path="/transactions" element={<PrivateRoute><><Transactions /><FloatingDockDemo/></></PrivateRoute>} />
-        <Route path="/profile" element={<PrivateRoute><><TryProfile /><FloatingDockDemo/></></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><><ProfilePage /><FloatingDockDemo/></></PrivateRoute>} />
         <Route path="*" element={<ErrorPage/>} />
 
       </Routes>
 
         {/* <FloatingDockDemo/> */}
-        <Toaster/>
         <FetchUsers/>
-        {/* <DebugAuth/> */}
+        <Toaster/>
     </Router>
   );
 }

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setGroups, selectGroups } from "../../redux/slices/groupsslice";
 import CreateGroup from "./creategroup";
-import EditGroup from "./editgroup";
 import ErrorBoundary from "../../shared/ErrorBoundary";
 import { useGetGroupsQuery } from "./groupApi";
 import useDeleteGroup from "./deletegroup";
@@ -18,13 +17,12 @@ interface Group {
 
 const GroupsList: React.FC = () => {
   const dispatch = useDispatch();
-  const { data: groups, isSuccess } = useGetGroupsQuery();
+  const { data: groups, isSuccess, isError, error } = useGetGroupsQuery();
   const storedGroups = useSelector(selectGroups);
   const { handleDeleteGroup } = useDeleteGroup();
 
-  const [editingGroup, setEditingGroup] = useState<Group | null>(null);
-  const [creatingExpenseGroup, setCreatingExpenseGroup] = useState<Group | null>(null);
-  const [viewingGroupId, setViewingGroupId] = useState<number | null>(null); // Track the group ID for details
+  const [creatingExpenseGroup, setCreatingExpenseGroup] = useState<number | null>(null);
+  const [viewingGroupId, setViewingGroupId] = useState<number | null>(null);
 
   useEffect(() => {
     if (isSuccess && groups) {
@@ -32,8 +30,12 @@ const GroupsList: React.FC = () => {
     }
   }, [isSuccess, groups, dispatch]);
 
+  if (isError) {
+    return <p className="text-red-500">Error loading groups: {error?.message}</p>;
+  }
+
   if (!storedGroups || storedGroups.length === 0) {
-    return <p className="text-gray-500">No groups available.</p>;
+    return <p className="text-gray-500">No groups available. Create a new group to get started.</p>;
   }
 
   return (
@@ -49,16 +51,16 @@ const GroupsList: React.FC = () => {
             <span>{group.name}</span>
             <div className="space-x-2">
               <button
-                onClick={() => setViewingGroupId(group.id)} // Set the group ID to fetch details
+                onClick={() => setCreatingExpenseGroup(group.id)}
+                className="text-green-500 hover:text-green-700"
+              >
+                Add Expense
+              </button>
+              <button
+                onClick={() => setViewingGroupId(group.id)}
                 className="text-blue-500 hover:text-blue-700"
               >
                 View Details
-              </button>
-              <button
-                onClick={() => setEditingGroup(group)}
-                className="text-yellow-500 hover:text-yellow-700"
-              >
-                Edit
               </button>
               <button
                 onClick={() => handleDeleteGroup(group.id)}
@@ -66,45 +68,30 @@ const GroupsList: React.FC = () => {
               >
                 Delete
               </button>
-              <button
-                onClick={() => setCreatingExpenseGroup(group)}
-                className="text-green-500 hover:text-green-700"
-              >
-                Add Expense
-              </button>
             </div>
           </li>
         ))}
       </ul>
 
-      {/* Edit Group Modal */}
-      {editingGroup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg">
-            <EditGroup group={editingGroup} onClose={() => setEditingGroup(null)} />
-          </div>
-        </div>
-      )}
-
       {/* Create Expense Modal */}
       {creatingExpenseGroup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg">
-            <CreateExpense group={creatingExpenseGroup} onClose={() => setCreatingExpenseGroup(null)} />
+            <CreateExpense groupId={creatingExpenseGroup} onClose={() => setCreatingExpenseGroup(null)} />
           </div>
         </div>
       )}
 
       {/* View Group Details Modal */}
       {viewingGroupId && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white p-6 rounded shadow-lg">
-          <ErrorBoundary>
-            <GroupDetails groupId={viewingGroupId} onClose={() => setViewingGroupId(null)} />
-          </ErrorBoundary>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg">
+            <ErrorBoundary>
+              <GroupDetails groupId={viewingGroupId} onClose={() => setViewingGroupId(null)} />
+            </ErrorBoundary>
+          </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   );
 };

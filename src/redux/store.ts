@@ -8,6 +8,8 @@ import { userApi } from "../pages/profile/userApi.tsx";
 import { groupsApi } from "../pages/groups/groupApi.tsx";
 import { transactionsApi } from "../pages/transactions/transactinsApi.tsx";
 import { balanceApi } from "../pages/friends/balanceApi.ts";
+import { settlementApi } from "../pages/create_transaction/settlementApi.ts";
+import { expenseApi } from "../pages/create_transaction/expenseApi.ts";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ export const store = configureStore({
     [groupsApi.reducerPath]: groupsApi.reducer,
     [transactionsApi.reducerPath]: transactionsApi.reducer,
     [balanceApi.reducerPath]: balanceApi.reducer, 
+    [settlementApi.reducerPath]: settlementApi.reducer,
+    [expenseApi.reducerPath]: expenseApi.reducer
 
   },
   middleware: (getDefaultMiddleware) =>
@@ -29,7 +33,9 @@ export const store = configureStore({
       usersApi.middleware, 
       groupsApi.middleware, 
       transactionsApi.middleware,
-      balanceApi.middleware
+      balanceApi.middleware,
+      settlementApi.middleware,
+      expenseApi.middleware
     ), 
 });
 

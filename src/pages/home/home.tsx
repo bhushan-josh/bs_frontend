@@ -1,11 +1,11 @@
-import HeroSection from "."
+import HeroSection from ".";
 
 const HomePage = () => {
-  return(
-  <>
-    <HeroSection/>
-  </>  
-)
-}
+  return (
+    <>
+      <HeroSection />
+    </>
+  );
+};
 
-export default HomePage
+export default HomePage;

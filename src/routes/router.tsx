@@ -3,7 +3,7 @@ import Landing from "../pages/landing/landing";
 import Friends from "../pages/friends/Friends";
 import Groups from "../pages/groups/group";
 import Transactions from "../pages/transactions/expenses";
-import Profile from "../pages/profile/Profile";
+import Profile from "../pages/profile/profile";
 
 const router = createBrowserRouter([
   { path: "/", element: <Landing /> },

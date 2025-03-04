@@ -1,5 +1,6 @@
 import React from "react";
 import { useGetGroupQuery } from "./groupApi";
+import { useGetUsersQuery } from "../friends/usersApi"; // Import the users API hook
 
 interface GroupMember {
   id: number;
@@ -21,25 +22,36 @@ interface GroupDetailsProps {
 }
 
 const GroupDetails: React.FC<GroupDetailsProps> = ({ groupId, onClose }) => {
-  console.log("Group ID in GroupDetails:", groupId); // Debugging
-
   // Fetch group details using the groupId
   const {
     data: groupDetails,
-    isLoading,
-    isError,
-    error,
+    isLoading: isGroupLoading,
+    isError: isGroupError,
+    error: groupError,
   } = useGetGroupQuery(groupId);
 
-  console.log("Group Details Response:", groupDetails); // Debugging
-  console.log("Error:", error); // Debugging
+  // Fetch users
+  const {
+    data: users = [],
+    isLoading: isUsersLoading,
+    isError: isUsersError,
+    error: usersError,
+  } = useGetUsersQuery();
 
-  if (isLoading) {
-    return <p className="text-gray-500">Loading group details...</p>;
+  console.log("Group ID in GroupDetails:", groupId); // Debugging
+  console.log("Group Details Response:", groupDetails); // Debugging
+  console.log("Users Response:", users); // Debugging
+
+  if (isGroupLoading || isUsersLoading) {
+    return <p className="text-gray-500">Loading...</p>;
   }
 
-  if (isError) {
-    return <p className="text-red-500">Error loading group details: {error?.message}</p>;
+  if (isGroupError || isUsersError) {
+    return (
+      <p className="text-red-500">
+        Error: {groupError?.message || usersError?.message}
+      </p>
+    );
   }
 
   if (!groupDetails) {
@@ -53,15 +65,19 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ groupId, onClose }) => {
       <h2 className="text-xl font-bold mb-4">Group Details</h2>
       <p><strong>Name:</strong> {group.name}</p>
       <p><strong>Description:</strong> {group.description}</p>
-      <p><strong>Creator ID:</strong> {group.creator_id}</p>
       <h3 className="text-lg font-bold mt-4">Members:</h3>
       {group.group_members && group.group_members.length > 0 ? (
         <ul>
-          {group.group_members.map((member) => (
-            <li key={member.id}>
-              <strong>Member ID:</strong> {member.member_id}, <strong>Role:</strong> {member.role}
-            </li>
-          ))}
+          {group.group_members.map((member) => {
+            // Find the user corresponding to the member ID
+            const user = users.find((u) => u.id === member.member_id);
+            return (
+              <li key={member.id}>
+                <strong>Member:</strong> {user ? `${user.first_name} ${user.last_name}  ` : `User ID: ${member.member_id}`} 
+                <strong>Role:</strong> {member.role}
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p className="text-gray-500">No members available.</p>

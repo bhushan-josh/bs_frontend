@@ -1,11 +1,11 @@
-import HeroSection from "."
+import HeroSection from ".";
 
 const Landing = () => {
-  return(
-  <>
-  <HeroSection/>
-  </>  
-)
-}
+  return (
+    <>
+      <HeroSection />
+    </>
+  );
+};
 
-export default Landing
+export default Landing;

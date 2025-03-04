@@ -35,16 +35,9 @@ const Signup = () => {
 
   return (
     <div className="font-inter overflow-hidden flex justify-center relative min-h-screen bg-gray-100">
-    {/* <img
-      src="https://pagedone.io/asset/uploads/1702362010.png"
-      alt="gradient background"
-      className="w-full h-full object-cover fixed"
-    /> */}
-
-
     <div className="mx-auto max-w-lg px-6 lg:px-8 absolute py-20">
       <img
-        src="src/assets/images/logo.webp"
+        src="src/assets/images/logo.png"
         alt="billsplitter logo"
         className="mx-auto lg:mb-11 mb-8 object-cover"
         onClick={()=>navigate("/")}

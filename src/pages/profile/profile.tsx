@@ -5,7 +5,7 @@ import Logout from "../auth/login/logout";
 import { useState } from "react";
 import { setAuth } from "../../redux/slices/authslice";
 
-const TryProfile = () => {
+const ProfilePage = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: RootState) => state.auth.userData); // Get current user from Redux
   const [updateUserApi] = useUpdateUserMutation();
@@ -96,4 +96,4 @@ const TryProfile = () => {
   );
 };
 
-export default TryProfile;
+export default ProfilePage;
