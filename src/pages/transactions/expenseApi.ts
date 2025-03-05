@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 const BASE_URL = "http://localhost:3000";
 
 export const expenseApi = createApi({
-  reducerPath: 'api', // Single reducer path for the combined API
+  reducerPath: 'api', 
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
     prepareHeaders: (headers) => {
@@ -16,13 +16,12 @@ export const expenseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Expenses","Balance"], // Define a tag type for settlements
+  tagTypes: ["Expenses","Balance"],
   endpoints: (builder) => ({
-    // Endpoint from transactionsApi
     getExpenses: builder.query<any[], void>({
       query: () => "/expense_splits",
       transformResponse: (response: { success: boolean; message: string; data: any[] }) => response.data,
-      providesTags: ["Expenses"], // Associate this query with the tag
+      providesTags: ["Expenses"],
     }),
 
     createExpenseSplit: builder.mutation({
@@ -31,31 +30,29 @@ export const expenseApi = createApi({
         method: "POST",
         body: expenseData,
       }),
-      invalidatesTags: ["Expenses"], // Invalidate the "Settlements" tag after this mutation
+      invalidatesTags: ["Expenses"],
     }),
 
     getBalance: builder.query<{ balance: number }, number>({
       query: (userId) => `/expense_splits/${userId}`,
       transformResponse: (response: { success: boolean; message: string; data: number }) => ({
-        balance: response.data, // Map `data` to `balance`
+        balance: response.data,
       }),
-      providesTags: ["Balance"], // Invalidate the "Settlements" tag after this mutation
+      providesTags: ["Balance"],
     }),
 
-    // Endpoint from expenseApi
     createExpense: builder.mutation({
       query: (expenseData) => ({
         url: '/expenses',
         method: 'POST',
         body: expenseData,
       }),
-      invalidatesTags: ["Expenses", "Balance"], // Invalidate the "Settlements" tag after this mutation
+      invalidatesTags: ["Expenses", "Balance"],
     }),
     
   }),
 });
 
-// Export hooks for the remaining endpoints
 export const {
   useGetExpensesQuery,
   useCreateExpenseSplitMutation,

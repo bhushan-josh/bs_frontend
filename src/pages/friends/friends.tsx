@@ -10,32 +10,27 @@ const UsersList = () => {
   const users = useSelector(selectUsers) || [];
   const [settleBalance] = useSettleBalanceMutation();
   const [createExpense] = useCreateExpenseSplitMutation();
-  const currentUser = useSelector((state: RootState) => state.auth.userData); // Get current user from Redux
+  const currentUser = useSelector((state: RootState) => state.auth.userData); 
 
-  // State for the settlement modal
   const [isSettleModalOpen, setIsSettleModalOpen] = useState(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<{ id: number; balance: number } | null>(null);
   const [amount, setAmount] = useState<number>(0);
 
-  // Fetch balance for the selected user
   const { data: balanceData, error, isFetching, refetch} = useGetBalanceQuery(selectedUser?.id || 0, {
-    skip: !selectedUser, // Skip the query if no user is selected
+    skip: !selectedUser,
   });
 
-  // Handle the "Settle" button click
   const handleSettleClick = (userId: number) => {
     setSelectedUser({ id: userId, balance: balanceData?.balance || 0 });
     setIsSettleModalOpen(true);
   };
 
-  // Handle the "Expense" button click
   const handleExpenseClick = (userId: number) => {
     setSelectedUser({ id: userId, balance: balanceData?.balance || 0 });
     setIsExpenseModalOpen(true);
   };
 
-  // Handle the settlement confirmation
   const handleConfirmSettle = async () => {
     if (!selectedUser) return;
 
@@ -43,7 +38,7 @@ const UsersList = () => {
       const payload = { payee_id: selectedUser.id };
       await settleBalance(payload).unwrap();
       toast.success("Settlement successful!");
-      setIsSettleModalOpen(false); // Close the modal after successful settlement
+      setIsSettleModalOpen(false);
       refetch();
     } catch (error: any) {
       console.error("Error settling balance:", error);
@@ -51,19 +46,18 @@ const UsersList = () => {
     }
   };
 
-  // Handle the expense creation
   const handleConfirmExpense = async () => {
     if (!selectedUser || amount <= 0) return;
 
     try {
       const payload = {
-        payer_id: currentUser.id, // Assuming currentUser is available in your context
+        payer_id: currentUser.id,
         payee_id: selectedUser.id,
         amount: amount,
       };
       await createExpense(payload).unwrap();
       toast.success("Expense created successfully!");
-      setIsExpenseModalOpen(false); // Close the modal after successful expense creation
+      setIsExpenseModalOpen(false);
       refetch();
     } catch (error: any) {
       console.error("Error creating expense:", error);
@@ -75,13 +69,12 @@ const UsersList = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Users List</h2>
 
-      {/* Users List */}
       {users.length === 0 ? (
         <p className="text-gray-500">No users found.</p>
       ) : (
         <ul className="space-y-2">
           {users.map((user) => {
-            if (!user?.id) return null; // Ensure user has an ID before calling API
+            if (!user?.id) return null; 
 
             const { data: balanceData, error, isFetching } = useGetBalanceQuery(user.id);
 
@@ -118,7 +111,6 @@ const UsersList = () => {
         </ul>
       )}
 
-      {/* Settlement Confirmation Modal */}
       {isSettleModalOpen && selectedUser && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
@@ -157,7 +149,6 @@ const UsersList = () => {
         </div>
       )}
 
-      {/* Expense Creation Modal */}
       {isExpenseModalOpen && selectedUser && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">

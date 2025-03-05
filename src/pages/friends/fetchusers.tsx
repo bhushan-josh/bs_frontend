@@ -13,7 +13,7 @@ const FetchUsers = () => {
     }
   }, [isSuccess, users, dispatch]);
 
-  return null; // No UI needed, just fetching users
+  return null;
 };
 
 export default FetchUsers;

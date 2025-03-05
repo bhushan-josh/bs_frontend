@@ -13,7 +13,7 @@ const FetchGroups = () => {
     }
   }, [isSuccess, groups, dispatch]);
 
-  return null; // No UI needed, just fetching groups
+  return null;
 };
 
 export default FetchGroups;

@@ -10,7 +10,6 @@ interface CreateExpenseProps {
 }
 
 const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
-  // Fetch group details
   const {
     data: groupDetails,
     isLoading: isGroupLoading,
@@ -18,7 +17,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
     error: groupError,
   } = useGetGroupQuery(groupId);
 
-  // Fetch all users
   const {
     data: users = [],
     isLoading: isUsersLoading,
@@ -26,33 +24,27 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
     error: usersError,
   } = useGetUsersQuery();
 
-  // Map group members to their user details
   const getMemberName = (memberId: number) => {
     const user = users.find((user) => user.id === memberId);
     return user ? `${user.first_name} ${user.last_name}` : `User ${memberId}`;
   };
 
-  // State for form inputs
   const [payerId, setPayerId] = useState<number | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
   const [description, setDescription] = useState("");
   const [splitType, setSplitType] = useState<"equal" | "manual">("equal");
   const [manualSplits, setManualSplits] = useState<{ payee_id: number; amount: number }[]>([]);
 
-  // Create expense mutation
   const [createExpense, { isLoading: isCreating }] = useCreateExpenseMutation();
 
-  // Handle form submission
   const handleSubmit = async () => {
     if (!payerId || !amount || !description) {
       toast.error("Please fill all required fields.");
       return;
     }
 
-    // Prepare expense_splits_attributes
     let expenseSplits;
     if (splitType === "equal") {
-      // Split equally among all group members except the payer
       const payees = groupDetails?.group_members.filter((member) => member.member_id !== payerId) || [];
       const splitAmount = (amount / (payees.length+1)).toFixed(2);
       expenseSplits = payees.map((member) => ({
@@ -62,7 +54,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
         status: 0,
       }));
     } else {
-      // Use manual splits
       expenseSplits = manualSplits.map((split) => ({
         payer_id: payerId,
         payee_id: split.payee_id,
@@ -71,7 +62,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
       }));
     }
 
-    // Prepare the payload
     const payload = {
       payer_id: payerId,
       group_id: groupId,
@@ -85,19 +75,17 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
     try {
       await createExpense(payload).unwrap();
       toast.success("Expense created successfully!");
-      onClose(); // Close the modal after successful creation
+      onClose();
     } catch (error: any) {
       console.error("Error creating expense:", error);
       toast.error(error?.data?.message || "Failed to create expense.");
     }
   };
 
-  // Handle adding a manual split
   const handleAddManualSplit = () => {
     setManualSplits([...manualSplits, { payee_id: 0, amount: 0 }]);
   };
 
-  // Handle updating a manual split
   const handleManualSplitChange = (index: number, field: "payee_id" | "amount", value: number) => {
     const updatedSplits = [...manualSplits];
     updatedSplits[index][field] = value;
@@ -124,7 +112,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
     <div className="p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-xl font-bold mb-4">Create Expense</h2>
 
-      {/* Payer Selection */}
       <label className="block">Payer:</label>
       <select
         value={payerId || ""}
@@ -139,7 +126,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
         ))}
       </select>
 
-      {/* Amount Input */}
       <label className="block">Amount:</label>
       <input
         type="number"
@@ -149,7 +135,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
         className="w-full p-2 border rounded mb-2"
       />
 
-      {/* Description Input */}
       <label className="block">Description:</label>
       <input
         type="text"
@@ -159,7 +144,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
         className="w-full p-2 border rounded mb-2"
       />
 
-      {/* Split Type Toggle */}
       <label className="block">Split Type:</label>
       <select
         value={splitType}
@@ -170,7 +154,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
         <option value="manual">Manual Split</option>
       </select>
 
-      {/* Manual Split Fields */}
       {splitType === "manual" && (
         <div>
           {manualSplits.map((split, index) => (
@@ -183,7 +166,7 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
               >
                 <option value="">Select Payee</option>
                 {groupDetails.group_members
-                  .filter((member) => member.member_id !== payerId) // Exclude the payer
+                  .filter((member) => member.member_id !== payerId) 
                   .map((member) => (
                     <option key={member.member_id} value={member.member_id}>
                       {getMemberName(member.member_id)}
@@ -208,7 +191,6 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
         </div>
       )}
 
-      {/* Submit and Close Buttons */}
       <div className="flex justify-end space-x-2 mt-4">
         <button
           onClick={onClose}

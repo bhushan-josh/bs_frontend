@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-// Define the Group interface
 interface Group {
   id: number;
   name: string;
@@ -9,7 +8,6 @@ interface Group {
   creator_id: number;
 }
 
-// Define the initial state
 interface GroupsState {
   groups: Group[];
 }
@@ -18,7 +16,6 @@ const initialState: GroupsState = {
   groups: [],
 };
 
-// Create the groups slice
 const groupsSlice = createSlice({
   name: "groups",
   initialState,
@@ -40,7 +37,6 @@ const groupsSlice = createSlice({
   },
 });
 
-// Export actions and selectors
 export const { setGroups, addGroup, updateGroup, deleteGroup } = groupsSlice.actions;
 export const selectGroups = (state: RootState) => state.groups.groups;
 

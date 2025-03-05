@@ -1,6 +1,6 @@
 import React from "react";
 import { useGetGroupQuery } from "./groupApi";
-import { useGetUsersQuery } from "../friends/usersApi"; // Import the users API hook
+import { useGetUsersQuery } from "../friends/usersApi";
 
 interface GroupMember {
   id: number;
@@ -22,7 +22,6 @@ interface GroupDetailsProps {
 }
 
 const GroupDetails: React.FC<GroupDetailsProps> = ({ groupId, onClose }) => {
-  // Fetch group details using the groupId
   const {
     data: groupDetails,
     isLoading: isGroupLoading,
@@ -30,17 +29,12 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ groupId, onClose }) => {
     error: groupError,
   } = useGetGroupQuery(groupId);
 
-  // Fetch users
   const {
     data: users = [],
     isLoading: isUsersLoading,
     isError: isUsersError,
     error: usersError,
   } = useGetUsersQuery();
-
-  console.log("Group ID in GroupDetails:", groupId); // Debugging
-  console.log("Group Details Response:", groupDetails); // Debugging
-  console.log("Users Response:", users); // Debugging
 
   if (isGroupLoading || isUsersLoading) {
     return <p className="text-gray-500">Loading...</p>;
@@ -69,7 +63,6 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ groupId, onClose }) => {
       {group.group_members && group.group_members.length > 0 ? (
         <ul>
           {group.group_members.map((member) => {
-            // Find the user corresponding to the member ID
             const user = users.find((u) => u.id === member.member_id);
             return (
               <li key={member.id}>

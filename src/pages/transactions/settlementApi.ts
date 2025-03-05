@@ -16,7 +16,7 @@ export const settlementApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Settlements"], // Define a tag type for settlements
+  tagTypes: ["Settlements"],
   endpoints: (builder) => ({
     settleBalance: builder.mutation<any, { payee_id: number }>({
       query: (payload) => ({
@@ -24,12 +24,12 @@ export const settlementApi = createApi({
         method: "POST",
         body: payload,
       }),
-      invalidatesTags: ["Settlements"], // Invalidate the "Settlements" tag after this mutation
+      invalidatesTags: ["Settlements"],
     }),
     getSettlements: builder.query<any[], void>({
       query: () => "/settlements",
       transformResponse: (response: { success: boolean; message: string; data: any[] }) => response.data,
-      providesTags: ["Settlements"], // Provide the "Settlements" tag for this query
+      providesTags: ["Settlements"],
     }),
   }),
 });

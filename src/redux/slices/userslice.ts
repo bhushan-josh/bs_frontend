@@ -1,27 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store"; // Ensure correct path
+import { RootState } from "../store"; 
 
-// Define the user interface
 interface User {
   id: number;
   first_name: string;
   last_name: string;
   email: string;
-  phone: string; // Changed to string to support various phone formats
+  phone: string;
 }
 
-// Define the initial state
 interface UserState {
   users: User[];
-  currentUser: User | null; // Added current user state
+  currentUser: User | null; 
 }
 
 const initialState: UserState = {
   users: [],
-  currentUser: null, // Default to null
+  currentUser: null,
 };
 
-// Create the user slice
 const userSlice = createSlice({
   name: "users",
   initialState,
@@ -40,7 +37,6 @@ const userSlice = createSlice({
   },
 });
 
-// Export actions and selectors
 export const { setUsers, setCurrentUser, updateUser } = userSlice.actions;
 export const selectUsers = (state: RootState) => state.users.users;
 export const selectCurrentUser = (state: RootState) => state.users.currentUser;

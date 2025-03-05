@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast } from "sonner";
-import { useGetUsersQuery, usersApi } from "../friends/usersApi";
+import { useGetUsersQuery } from "../friends/usersApi";
 import { useCreateGroupMutation, useGetGroupsQuery } from "./groupApi";
 import { addGroup, setGroups } from "../../redux/slices/groupsslice";
 
@@ -13,8 +13,8 @@ const CreateGroup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [description, setDescription] = useState("");
   const [members, setMembers] = useState<number[]>([]);
 
-  const { data: users = [] } = useGetUsersQuery(); // Fetch users
-  const { refetch } = useGetGroupsQuery(); // Fetch groups
+  const { data: users = [] } = useGetUsersQuery();
+  const { refetch } = useGetGroupsQuery();
   const [createGroup, { isLoading }] = useCreateGroupMutation();
 
   const currentUser = useSelector((state: RootState) => state.auth.userData);
@@ -60,7 +60,7 @@ const CreateGroup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         group_members_attributes: members.map((id) => ({ member_id: id })),
       };
 
-      console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
+      // console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
 
       const newGroup = await createGroup(payload).unwrap();
 
@@ -145,5 +145,3 @@ const CreateGroup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 };
 
 export default CreateGroup;
-
-

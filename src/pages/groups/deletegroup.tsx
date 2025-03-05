@@ -10,7 +10,7 @@ const useDeleteGroup = () => {
   const handleDeleteGroup = async (groupId: number) => {
     try {
       await deleteGroupAPI(groupId).unwrap();
-      dispatch(deleteGroup(groupId)); // Remove from Redux store
+      dispatch(deleteGroup(groupId));
       toast.success("Group deleted successfully!");
     } catch (error: any) {
       console.error("Error deleting group:", error);
