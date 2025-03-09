@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setGroups, selectGroups } from "../../redux/slices/groupsslice";
 import CreateGroup from "./creategroup";
-import ErrorBoundary from "../../shared/ErrorBoundary";
 import { useGetGroupsQuery } from "./groupApi";
 import useDeleteGroup from "./deletegroup";
 import GroupDetails from "./groupdetails";
@@ -16,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../shared/components/table";
+import { IconX } from "@tabler/icons-react";
 
 const GroupsList: React.FC = () => {
   const dispatch = useDispatch();
@@ -27,7 +27,7 @@ const GroupsList: React.FC = () => {
     number | null
   >(null);
   const [viewingGroupId, setViewingGroupId] = useState<number | null>(null);
-  const [isCreatingGroup, setIsCreatingGroup] = useState<boolean>(false); // Modal State
+  const [isCreatingGroup, setIsCreatingGroup] = useState<boolean>(false);
 
   useEffect(() => {
     if (isSuccess && groups) {
@@ -44,106 +44,112 @@ const GroupsList: React.FC = () => {
         backgroundColor: "rgba(255, 255, 255, 0.65)",
       }}
     >
-      <div className="relative w-[1400px] h-[700px] bg-white rounded-3xl shadow-xl overflow-hidden flex gap-x-24 -mt-6">
-        <div className="absolute top-[5%] left-[5%] flex items-center gap-4">
-          <h2 className="absolute top-4 left-6 text-2xl font-bold text-gray-800">
-            Groups
-          </h2>
-        </div>
-          <div className="absolute top-[8%] right-[6%] flex items-center gap-4">
-            <div className="w-[2px] h-8 bg-gray-300"></div>
-            <Button variant="outline" onClick={() => setIsCreatingGroup(true)}>
-              Create Group
-            </Button>
-          </div>
-          <hr></hr>
+      <div className="absolute left-[20%] transform -translate-x-1/2 top-[5%] text-4xl font-bold font-[Arial] text-gray-400">
+        billsplitter
+      </div>
 
-        <div className=" absolute top-[15%] flex justify-center items-center gap-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead> Group Name</TableHead>
-                <TableHead> Group Description</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {storedGroups.map((group) => (
-                <TableRow key={group.id}>
-                  <TableCell>{group.name}</TableCell>
-                  <TableCell>{group.description}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button
-                      variant="ghost"
-                      className="text-green-600 hover:bg-green-100"
-                      onClick={() => setCreatingExpenseGroup(group.id)}
-                    >
-                      Add Expense
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="text-blue-600 hover:bg-blue-100"
-                      onClick={() => setViewingGroupId(group.id)}
-                    >
-                      View Details
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="text-red-600 hover:bg-red-100"
-                      onClick={() => handleDeleteGroup(group.id)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          {/* Create Expense Modal */}
-          {creatingExpenseGroup && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-6 rounded shadow-lg">
-                <CreateExpense
-                  groupId={creatingExpenseGroup}
-                  onClose={() => setCreatingExpenseGroup(null)}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* View Group Details Modal */}
-          {viewingGroupId && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-6 rounded shadow-lg">
-                <ErrorBoundary>
-                  <GroupDetails
-                    groupId={viewingGroupId}
-                    onClose={() => setViewingGroupId(null)}
-                  />
-                </ErrorBoundary>
-              </div>
-            </div>
-          )}
-
-          {/* Create Group Modal */}
-          {isCreatingGroup && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                <h3 className="text-lg font-semibold mb-4">Create New Group</h3>
-                <CreateGroup onClose={() => setIsCreatingGroup(false)} />
-                <Button
-                  className="mt-4 bg-gray-500 hover:bg-gray-700 text-white"
-                  onClick={() => setIsCreatingGroup(false)}
-                >
-                  Close
-                </Button>
-              </div>
-            </div>
-          )}
+      <div className="relative w-[1400px] h-[700px] bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col -mt-6 p-8">
+        <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold text-gray-800">Groups</h2>
+        <div className="flex items-center gap-4">
+          <div className="w-[1px] h-8 bg-gray-300"></div>
+          <Button
+            variant="link"
+            className="text-lg px-4 py-2"
+            onClick={() => setIsCreatingGroup(true)}
+          >
+            Create Group
+          </Button>
         </div>
       </div>
+  
+      <div className="flex-1 overflow-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-lg">Group Name</TableHead>
+              <TableHead className="text-lg">Group Description</TableHead>
+              <TableHead className="text-lg text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {storedGroups.map((group) => (
+              <TableRow key={group.id}>
+                <TableCell className="text-lg capitalize">{group.name}</TableCell>
+                <TableCell className="text-lg">{group.description}</TableCell>
+                <TableCell className="text-lg text-right space-x-2">
+                  <Button
+                    variant="ghost"
+                    className="text-base text-green-600 hover:bg-green-100"
+                    onClick={() => setCreatingExpenseGroup(group.id)}
+                  >
+                    Add Expense
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="text-base text-blue-600 hover:bg-blue-100"
+                    onClick={() => setViewingGroupId(group.id)}
+                  >
+                    View Details
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="text-base text-red-600 hover:bg-red-100"
+                    onClick={() => handleDeleteGroup(group.id)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+  
+      {/* Modals */}
+      {creatingExpenseGroup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg">
+            <CreateExpense
+              groupId={creatingExpenseGroup}
+              onClose={() => setCreatingExpenseGroup(null)}
+            />
+          </div>
+        </div>
+      )}
+  
+      {viewingGroupId && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg">
+            <GroupDetails
+              groupId={viewingGroupId}
+              onClose={() => setViewingGroupId(null)}
+            />
+          </div>
+        </div>
+      )}
+  
+      {isCreatingGroup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="relative bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+            {/* Close Button */}
+            <div className="flex justify-end mb-4">
+              <button
+                className="p-2 text-gray-800 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+                onClick={() => setIsCreatingGroup(false)}
+              >
+                <IconX />
+              </button>
+            </div>
+  
+            {/* Create Group Form */}
+            <CreateGroup onClose={() => setIsCreatingGroup(false)} />
+          </div>
+        </div>
+      )}
     </div>
+  </div>
+  
   );
 };
 

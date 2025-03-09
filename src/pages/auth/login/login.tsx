@@ -56,7 +56,7 @@ const Login = () => {
         <div className="rounded-2xl bg-white shadow-xl p-7 lg:p-11">
           <h1 className="text-gray-900 text-center text-3xl font-bold mb-2">Welcome Back</h1>
           <p className="text-gray-500 text-center text-base font-medium mb-6">
-            Let’s split the bills for better accountability.
+            Let's split the bills for better accountability.
           </p>
 
           {error && <p className="text-red-600 text-center mb-4">Login failed. Try again.</p>}

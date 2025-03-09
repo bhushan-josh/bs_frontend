@@ -100,7 +100,7 @@ const HeroSection: React.FC = () => {
             <div className="xl:col-span-3">
               <img
                 className="w-full mx-auto scale-110"
-                src="https://d33wubrfki0l68.cloudfront.net/29c501c64b21014b3f2e225abe02fe31fd8f3a5c/f866d/images/hero/3/illustration.png"
+                src="src/assets/images/image (1).png"
                 alt="Illustration"
               />
             </div>

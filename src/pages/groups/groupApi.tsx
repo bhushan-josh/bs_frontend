@@ -16,15 +16,18 @@ export const groupsApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Group"],
   endpoints: (builder) => ({
     getGroups: builder.query<any[], void>({
       query: () => "/groups",
       transformResponse: (response: { success: boolean; message: string; data: any[] }) => response.data,
+      providesTags: ["Group"],
     }),
 
     getGroup: builder.query<any, number>({
       query: (groupId) => `/groups/${groupId}`,
       transformResponse: (response: { success: boolean; message: string; data: any }) => response.data,
+      providesTags: (result, error, id) => [{ type: "Group", id }],
     }),
 
     createGroup: builder.mutation<any, { name: string; description?: string }>({
@@ -33,6 +36,7 @@ export const groupsApi = createApi({
         method: "POST",
         body: newGroup,
       }),
+      invalidatesTags: ["Group"],
     }),
 
     updateGroup: builder.mutation<any, { id: number; updatedGroup: any }>({
@@ -41,6 +45,7 @@ export const groupsApi = createApi({
         method: "PUT",
         body: updatedGroup,
       }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Group", id }],
     }),
 
     deleteGroup: builder.mutation<void, number>({
@@ -48,6 +53,7 @@ export const groupsApi = createApi({
         url: `/groups/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Group"],
     }),
   }),
 });

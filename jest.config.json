@@ -1,3 +1,19 @@
 {
-  "testEnvironment" : "jsdom"
+  "clearMocks": true,
+  "collectCoverage": true,
+  "coverageDirectory": "coverage",
+  "coverageProvider": "v8",
+  "testEnvironment": "jsdom",
+  "moduleFileExtensions": ["js", "jsx", "ts", "tsx", "json"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1"
+  },
+  "testMatch": ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[tj]s?(x)"],
+  "transform": {
+    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.jsx?$": "babel-jest"
+  },
+  "transformIgnorePatterns": ["/node_modules/", "\\.pnp\\.[^\\/]+$"],
+  "testPathIgnorePatterns": ["/node_modules/"],
+  "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"]
 }

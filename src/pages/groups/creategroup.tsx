@@ -8,7 +8,7 @@ import { addGroup, setGroups } from "../../redux/slices/groupsslice";
 
 const CreateGroup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const dispatch = useDispatch();
-  
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [members, setMembers] = useState<number[]>([]);
@@ -70,13 +70,13 @@ const CreateGroup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
       const { data: updatedGroups } = await refetch();
       if (updatedGroups) {
-        dispatch(setGroups(updatedGroups)); 
+        dispatch(setGroups(updatedGroups));
       }
 
       setName("");
       setDescription("");
       setMembers([]);
-      onClose()
+      onClose();
     } catch (error: any) {
       console.error("Error creating group:", error);
       toast.error(error?.data?.message || "Failed to create group.");
@@ -84,29 +84,36 @@ const CreateGroup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Create a New Group</h2>
+    <div className="p-8 bg-white shadow-2xl rounded-xl max-w-lg mx-auto">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+        Create a New Group
+      </h2>
 
+      {/* Group Name Input */}
       <input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Group Name"
-        className="w-full p-2 border rounded mb-2"
+        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-400 focus:border-green-500 outline-none mb-3"
       />
 
+      {/* Group Description Input */}
       <input
         type="text"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Group Description (Optional)"
-        className="w-full p-2 border rounded mb-2"
+        placeholder="Group Description"
+        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-400 focus:border-green-500 outline-none mb-3"
       />
 
-      <label className="block font-medium mb-2">Select Members</label>
+      {/* Select Members */}
+      <label className="block font-semibold text-gray-700 mt-4 mb-2">
+        Select Members
+      </label>
       <select
         onChange={(e) => handleAddMember(Number(e.target.value))}
-        className="w-full p-2 border rounded mb-2"
+        className="w-full p-3 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-400 focus:border-green-500 outline-none mb-3"
       >
         <option value="">-- Select User --</option>
         {users.map((user) => (
@@ -116,27 +123,47 @@ const CreateGroup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         ))}
       </select>
 
-      {members.length > 0 && (
-        <div className="mb-4">
-          <h3 className="font-medium mb-2">Selected Members</h3>
-          {members.map((id) => {
-            const user = users.find((u) => u.id === id);
-            return (
-              <div key={id} className="flex justify-between items-center bg-gray-100 p-2 rounded mb-1">
-                <span>{user ? `${user.first_name} ${user.last_name}` : `User ID: ${id}`}</span>
-                <button className="text-red-500" onClick={() => handleRemoveMember(id)}>
-                  Remove
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      {/* Selected Members List */}
+{/* Selected Members List */}
+{members.length > 0 && (
+  <div className="mt-4 max-h-40 overflow-hidden">
+    <h3 className="font-semibold text-gray-700 mb-2">Selected Members</h3>
+    <div className="h-32 overflow-y-auto border border-gray-300 rounded-lg p-2">
+      {members.map((id) => {
+        const user = users.find((u) => u.id === id);
+        return (
+          <div
+            key={id}
+            className="flex justify-between items-center bg-gray-100 p-2 rounded-lg shadow"
+          >
+            <span className="text-gray-800">
+              {user
+                ? `${user.first_name} ${user.last_name}`
+                : `User ID: ${id}`}
+            </span>
+            <button
+              className="text-red-500 font-semibold hover:text-red-700 transition"
+              onClick={() => handleRemoveMember(id)}
+            >
+              Remove
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
 
+
+      {/* Submit Button */}
       <button
         onClick={handleSubmit}
         disabled={isLoading}
-        className={`w-full text-white p-2 rounded ${isLoading ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"}`}
+        className={`w-full text-white p-3 rounded-lg font-semibold transition-all mt-6 ${
+          isLoading
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-green-500 hover:bg-green-600"
+        }`}
       >
         {isLoading ? "Creating..." : "Create Group"}
       </button>

@@ -1,42 +1,79 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../shared/components/table";
 import { useGetUsersQuery } from "../friends/usersApi";
 import { useGetSettlementsQuery } from "./settlementApi";
 
 const SettlementList = () => {
-  const { data: settlements, error: settlementsError, isLoading: settlementsLoading } = useGetSettlementsQuery();
-  const { data: users, error: usersError, isLoading: usersLoading } = useGetUsersQuery();
+  const {
+    data: settlements,
+    error: settlementsError,
+    isLoading: settlementsLoading,
+  } = useGetSettlementsQuery();
+  const {
+    data: users,
+    error: usersError,
+    isLoading: usersLoading,
+  } = useGetUsersQuery();
 
-  if (settlementsLoading || usersLoading) return <p>Loading...</p>;
-  if (settlementsError || usersError) return <p className="text-red-500">Error fetching data</p>;
+  if (settlementsLoading || usersLoading)
+    return <p className="text-lg text-gray-600 text-center">Loading...</p>;
+  if (settlementsError || usersError)
+    return <p className="text-lg text-red-500 text-center">Error fetching data</p>;
 
   const usersMap = users?.reduce((acc, user) => {
-    acc[user.id] = `${user.first_name} ${user.last_name}`.trim(); 
+    acc[user.id] = `${user.first_name} ${user.last_name}`.trim();
     return acc;
   }, {} as Record<number, string>);
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Transactions</h2>
-      <div>
-        <h3 className="text-xl font-semibold mb-2">Settlements</h3>
-        {settlements && settlements.length > 0 ? (
-          <ul>
+    <div className="w-full overflow-x-auto max-h-[32rem]">
+      {settlements && settlements.length > 0 ? (
+        <Table className="w-full text-lg">
+          <TableHeader>
+            <TableRow className="text-lg">
+              <TableHead className="p-4">Payer</TableHead>
+              <TableHead className="p-4">Payee</TableHead>
+              <TableHead className="p-4">Amount</TableHead>
+              <TableHead className="p-4">Time</TableHead>
+              <TableHead className="p-4">Date</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {settlements.map((settlement) => (
-              <li key={settlement.id} className="p-2 border-b">
-                <strong>
-                  {usersMap?.[settlement.payer_id] || "Unknown"}{" "}
-                  </strong>
-                settled ₹{settlement.amount} with <strong>you</strong>
-                <br></br>
-                <small>
-                  Time: {settlement.created_at}
-                  </small>
-              </li>
+              <TableRow
+                key={settlement.id}
+                className="hover:bg-gray-50 transition"
+              >
+                <TableCell className="p-4 font-medium">
+                  {usersMap?.[settlement.payer_id] || "Unknown"}
+                </TableCell>
+                <TableCell className="p-4 font-medium">
+                  {usersMap?.[settlement.payee_id] || "Unknown"}
+                </TableCell>
+                <TableCell className="p-4 font-semibold text-green-600">
+                  ₹{settlement.amount}
+                </TableCell>
+                <TableCell className="p-4 text-gray-600">
+                  {new Date(settlement.created_at).toLocaleTimeString()}
+                </TableCell>
+                <TableCell className="p-4 text-gray-600">
+                  {new Date(settlement.created_at).toLocaleDateString()}
+                </TableCell>
+              </TableRow>
             ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No settlements available.</p>
-        )}
-      </div>
+          </TableBody>
+        </Table>
+      ) : (
+          <p className="text-center text-gray-500 p-6">
+            No settlements available.
+          </p>
+      )}
     </div>
   );
 };

@@ -14,14 +14,18 @@ const ProfilePage = () => {
         backgroundBlendMode: "overlay",
         backgroundColor: "rgba(255, 255, 255, 0.65)",
       }}
-    >
-      <div className="relative w-[1400px] h-[650px] bg-white rounded-3xl shadow-xl overflow-hidden flex gap-x-24 -mt-6">
+      >
+      <div className="absolute left-[20%] transform -translate-x-1/2 top-[5%] text-4xl font-bold font-[Arial] text-gray-400">
+        billsplitter
+      </div>
+
+      <div className="relative w-[1400px] h-[700px] bg-white rounded-3xl shadow-xl overflow-hidden flex gap-x-24 -mt-6">
         <div className="absolute top-[6%] right-[26%] flex items-center gap-4">
           <h2 className="absolute top-4 left-6 text-2xl font-bold text-gray-800">
-            BillSplitter
+            Profile
           </h2>
         </div>
-        <div className="absolute top-[8%] right-[6%] flex items-center gap-4">
+        <div className="absolute top-[8%] right-[8%] flex items-center gap-4">
           <div className="w-[2px] h-8 bg-gray-300"></div>
           <Button variant="link" className="text-lg p-4">
             <Logout />

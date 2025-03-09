@@ -8,7 +8,6 @@ const Signup = () => {
   const navigate = useNavigate();
   const [signupUser, { isLoading, error }] = useSignupUserMutation();
 
-  // Yup validation schema
   const validationSchema = Yup.object({
     first_name: Yup.string().required("First Name is required"),
     last_name: Yup.string().required("Last Name is required"),
@@ -17,7 +16,6 @@ const Signup = () => {
     password: Yup.string().required("Password is required"),
   });
 
-  // Formik setup
   const formik = useFormik({
     initialValues: {
       first_name: "",

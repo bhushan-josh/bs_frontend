@@ -55,29 +55,54 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ groupId, onClose }) => {
   const group = groupDetails;
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Group Details</h2>
-      <p><strong>Name:</strong> {group.name}</p>
-      <p><strong>Description:</strong> {group.description}</p>
-      <h3 className="text-lg font-bold mt-4">Members:</h3>
+    <div className="p-8 bg-white shadow-2xl rounded-xl max-w-lg mx-auto">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+        Group Details
+      </h2>
+
+      {/* Group Name */}
+      <p className="text-gray-800 mb-3">
+        <strong className="font-semibold">Name:</strong> {group.name}
+      </p>
+
+      {/* Group Description */}
+      <p className="text-gray-800 mb-3">
+        <strong className="font-semibold">Description:</strong>{" "}
+        {group.description}
+      </p>
+
+      {/* Members List */}
+      <h3 className="text-lg font-bold text-gray-700 mt-4 mb-2">Members</h3>
       {group.group_members && group.group_members.length > 0 ? (
-        <ul>
+        <div className="space-y-2 max-h-40 overflow-y-auto">
           {group.group_members.map((member) => {
             const user = users.find((u) => u.id === member.member_id);
             return (
-              <li key={member.id}>
-                <strong>Member:</strong> {user ? `${user.first_name} ${user.last_name}  ` : `User ID: ${member.member_id}`} 
-                <strong>Role:</strong> {member.role}
-              </li>
+              <div
+                key={member.id}
+                className="flex justify-between items-center bg-gray-100 p-2 rounded-lg shadow"
+              >
+                <span className="text-gray-800">
+                  <strong className="font-semibold">Member:</strong>{" "}
+                  {user
+                    ? `${user.first_name} ${user.last_name}`
+                    : `User ID: ${member.member_id}`}
+                </span>
+                <span className="text-gray-600">
+                  <strong className="font-semibold">Role:</strong> {member.role}
+                </span>
+              </div>
             );
           })}
-        </ul>
+        </div>
       ) : (
         <p className="text-gray-500">No members available.</p>
       )}
+
+      {/* Close Button */}
       <button
         onClick={onClose}
-        className="mt-4 p-2 bg-gray-500 text-white rounded w-full"
+        className="mt-6 w-full text-white p-3 rounded-lg font-semibold transition-all bg-gray-500 hover:bg-gray-600"
       >
         Close
       </button>
@@ -86,5 +111,3 @@ const GroupDetails: React.FC<GroupDetailsProps> = ({ groupId, onClose }) => {
 };
 
 export default GroupDetails;
-
-

@@ -10,19 +10,8 @@ interface CreateExpenseProps {
 }
 
 const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
-  const {
-    data: groupDetails,
-    isLoading: isGroupLoading,
-    isError: isGroupError,
-    error: groupError,
-  } = useGetGroupQuery(groupId);
-
-  const {
-    data: users = [],
-    isLoading: isUsersLoading,
-    isError: isUsersError,
-    error: usersError,
-  } = useGetUsersQuery();
+  const { data: groupDetails, isLoading: isGroupLoading } = useGetGroupQuery(groupId);
+  const { data: users = [] } = useGetUsersQuery();
 
   const getMemberName = (memberId: number) => {
     const user = users.find((user) => user.id === memberId);
@@ -45,16 +34,16 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
 
     let expenseSplits;
     if (splitType === "equal") {
-      const payees = groupDetails?.group_members.filter((member) => member.member_id !== payerId) || [];
-      const splitAmount = (amount / (payees.length+1)).toFixed(2);
-      expenseSplits = payees.map((member) => ({
+      const payees = groupDetails?.group_members.filter(member => member.member_id !== payerId) || [];
+      const splitAmount = (amount / (payees.length + 1)).toFixed(2);
+      expenseSplits = payees.map(member => ({
         payer_id: payerId,
         payee_id: member.member_id,
         amount: parseFloat(splitAmount),
         status: 0,
       }));
     } else {
-      expenseSplits = manualSplits.map((split) => ({
+      expenseSplits = manualSplits.map(split => ({
         payer_id: payerId,
         payee_id: split.payee_id,
         amount: split.amount,
@@ -62,22 +51,17 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
       }));
     }
 
-    const payload = {
-      payer_id: payerId,
-      group_id: groupId,
-      amount,
-      description,
-      expense_splits_attributes: expenseSplits,
-    };
-
-    console.log("Payload sent to API:", JSON.stringify(payload, null, 2));
-
     try {
-      await createExpense(payload).unwrap();
+      await createExpense({
+        payer_id: payerId,
+        group_id: groupId,
+        amount,
+        description,
+        expense_splits_attributes: expenseSplits,
+      }).unwrap();
       toast.success("Expense created successfully!");
       onClose();
     } catch (error: any) {
-      console.error("Error creating expense:", error);
       toast.error(error?.data?.message || "Failed to create expense.");
     }
   };
@@ -92,119 +76,103 @@ const CreateExpense: React.FC<CreateExpenseProps> = ({ groupId, onClose }) => {
     setManualSplits(updatedSplits);
   };
 
-  if (isGroupLoading || isUsersLoading) {
-    return <p className="text-gray-500">Loading group details...</p>;
-  }
-
-  if (isGroupError || isUsersError) {
-    return (
-      <p className="text-red-500">
-        Error loading data: {groupError?.message || usersError?.message || "Unknown error"}
-      </p>
-    );
-  }
-
-  if (!groupDetails) {
-    return <p className="text-gray-500">No group data available.</p>;
-  }
-
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Create Expense</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white shadow-2xl rounded-xl max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="p-5 border-b text-center">
+          <h2 className="text-2xl font-bold text-gray-800">Create Expense</h2>
+        </div>
 
-      <label className="block">Payer:</label>
-      <select
-        value={payerId || ""}
-        onChange={(e) => setPayerId(Number(e.target.value))}
-        className="w-full p-2 border rounded mb-2"
-      >
-        <option value="">Select Payer</option>
-        {groupDetails.group_members.map((member) => (
-          <option key={member.member_id} value={member.member_id}>
-            {getMemberName(member.member_id)}
-          </option>
-        ))}
-      </select>
-
-      <label className="block">Amount:</label>
-      <input
-        type="number"
-        value={amount || ""}
-        onChange={(e) => setAmount(Number(e.target.value))}
-        placeholder="Enter amount"
-        className="w-full p-2 border rounded mb-2"
-      />
-
-      <label className="block">Description:</label>
-      <input
-        type="text"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Enter description"
-        className="w-full p-2 border rounded mb-2"
-      />
-
-      <label className="block">Split Type:</label>
-      <select
-        value={splitType}
-        onChange={(e) => setSplitType(e.target.value as "equal" | "manual")}
-        className="w-full p-2 border rounded mb-2"
-      >
-        <option value="equal">Split Equally</option>
-        <option value="manual">Manual Split</option>
-      </select>
-
-      {splitType === "manual" && (
-        <div>
-          {manualSplits.map((split, index) => (
-            <div key={index} className="mb-2">
-              <label className="block">Payee:</label>
-              <select
-                value={split.payee_id}
-                onChange={(e) => handleManualSplitChange(index, "payee_id", Number(e.target.value))}
-                className="w-full p-2 border rounded"
-              >
-                <option value="">Select Payee</option>
-                {groupDetails.group_members
-                  .filter((member) => member.member_id !== payerId) 
-                  .map((member) => (
-                    <option key={member.member_id} value={member.member_id}>
-                      {getMemberName(member.member_id)}
-                    </option>
-                  ))}
-              </select>
-              <label className="block">Amount:</label>
-              <input
-                type="number"
-                value={split.amount}
-                onChange={(e) => handleManualSplitChange(index, "amount", Number(e.target.value))}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-          ))}
-          <button
-            onClick={handleAddManualSplit}
-            className="mt-2 p-2 bg-blue-500 text-white rounded"
+        <div className="p-5 overflow-y-auto flex-1">
+          <label className="block font-semibold text-gray-700 mb-2">Payer</label>
+          <select
+            value={payerId || ""}
+            onChange={(e) => setPayerId(Number(e.target.value))}
+            className="w-full p-3 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-400 focus:border-green-500 outline-none mb-4"
           >
-            Add Payee
+            <option value="">Select Payer</option>
+            {groupDetails?.group_members.map(member => (
+              <option key={member.member_id} value={member.member_id}>
+                {getMemberName(member.member_id)}
+              </option>
+            ))}
+          </select>
+
+          <label className="block font-semibold text-gray-700 mb-2">Amount</label>
+          <input
+            type="number"
+            value={amount || ""}
+            onChange={(e) => setAmount(Number(e.target.value))}
+            className="w-full p-3 border rounded-lg mb-4"
+          />
+
+          <label className="block font-semibold text-gray-700 mb-2">Description</label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full p-3 border rounded-lg mb-4"
+          />
+
+          <label className="block font-semibold text-gray-700 mb-2">Split Type</label>
+          <select
+            value={splitType}
+            onChange={(e) => setSplitType(e.target.value as "equal" | "manual")}
+            className="w-full p-3 border rounded-lg bg-gray-50 focus:ring-2 focus:ring-green-400 focus:border-green-500 outline-none mb-4"
+          >
+            <option value="equal">Split Equally</option>
+            <option value="manual">Manual Split</option>
+          </select>
+
+          {splitType === "manual" && (
+            <div>
+              <h3 className="font-semibold text-gray-700 mb-2">Manual Split</h3>
+              <div className="space-y-3">
+                {manualSplits.map((split, index) => (
+                  <div key={index} className="p-3 bg-gray-100 rounded-lg shadow">
+                    <label className="block font-medium text-gray-700 mb-1">Payee</label>
+                    <select
+                      value={split.payee_id}
+                      onChange={(e) =>
+                        handleManualSplitChange(index, "payee_id", Number(e.target.value))
+                      }
+                      className="w-full p-2 border rounded-lg mb-2"
+                    >
+                      <option value="">Select Payee</option>
+                      {groupDetails?.group_members
+                        .filter(member => member.member_id !== payerId)
+                        .map(member => (
+                          <option key={member.member_id} value={member.member_id}>
+                            {getMemberName(member.member_id)}
+                          </option>
+                        ))}
+                    </select>
+
+                    <label className="block font-medium text-gray-700 mb-1">Amount</label>
+                    <input
+                      type="number"
+                      value={split.amount}
+                      onChange={(e) =>
+                        handleManualSplitChange(index, "amount", Number(e.target.value))
+                      }
+                      className="w-full p-2 border rounded-lg"
+                    />
+                  </div>
+                ))}
+              </div>
+              <button onClick={handleAddManualSplit} className="mt-3 w-full p-3 bg-blue-500 text-white rounded-lg font-semibold">
+                Add Payee
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="p-5 border-t flex justify-end space-x-3">
+          <button onClick={onClose} className="p-3 bg-gray-500 text-white rounded-lg">Close</button>
+          <button onClick={handleSubmit} disabled={isCreating} className="p-3 bg-green-500 text-white rounded-lg">
+            {isCreating ? "Creating..." : "Create Expense"}
           </button>
         </div>
-      )}
-
-      <div className="flex justify-end space-x-2 mt-4">
-        <button
-          onClick={onClose}
-          className="p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-        >
-          Close
-        </button>
-        <button
-          onClick={handleSubmit}
-          disabled={isCreating}
-          className={`p-2 text-white rounded ${isCreating ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"}`}
-        >
-          {isCreating ? "Creating..." : "Create Expense"}
-        </button>
       </div>
     </div>
   );
